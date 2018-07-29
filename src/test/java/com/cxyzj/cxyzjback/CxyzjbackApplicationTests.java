@@ -1,8 +1,5 @@
 package com.cxyzj.cxyzjback;
 
-import com.cxyzj.cxyzjback.Bean.Student;
-import com.cxyzj.cxyzjback.Utils.Item;
-import com.cxyzj.cxyzjback.Utils.Response;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
