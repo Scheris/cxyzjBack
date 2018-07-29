@@ -108,7 +108,7 @@ public class SnowflakeIdGenerator {
     protected long currentTime() {
         return System.currentTimeMillis();
     }
-    //====================================================Test Case=====================================================
+    //====================================================Test11 Case=====================================================
     public static void main(String[] args) {
         SnowflakeIdGenerator idWorker = new SnowflakeIdGenerator(0, 0);
         for (int i = 0; i < 1000; i++) {
