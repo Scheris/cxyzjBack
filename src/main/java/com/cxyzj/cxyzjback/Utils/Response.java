@@ -1,6 +1,5 @@
 package com.cxyzj.cxyzjback.Utils;
 
-import com.cxyzj.cxyzjback.Bean.Template;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -17,35 +16,32 @@ import java.util.HashMap;
  * @desc 响应请求
  */
 public class Response {
-    private int status;//状态码
     private HashMap<String, Object> data = new HashMap<>();//数据
     private HashMap<String, Object> response = new HashMap<>();//响应
 
-    public void insert(Template bean) {//插入单个对象数据
-        insert(bean.getClassName(), bean);
+    public void insert(Object bean) {//插入单个对象数据
+        insert(bean.getClass().getSimpleName().toLowerCase(), bean);
     }
 
     public void insert(String key, Object value) {//插入单条数据
         data.put(key, value);
     }
 
-    public void insert(Template[] beans) {//插入数组型数据
-        ArrayList<Template> tmp = new ArrayList<>(Arrays.asList(beans));
-        data.put(beans[0].getClassName(), tmp);
+    public void insert(Object[] beans) {//插入多个对象数据
+        ArrayList<Object> tmp = new ArrayList<>(Arrays.asList(beans));
+        data.put(beans[0].getClass().getSimpleName().toLowerCase(), tmp);
     }
 
     public String SendSuccess() {
-        status = 0;
-        response.put("status", status);
+        response.put("status", Status.OK);
         response.put("data", data);
-        return new Gson().toJson(response, HashMap.class);
+        return new Gson().toJson(response, HashMap.class);//格式转换
     }
 
     public String SendFailure(String statusInfo) {
-        status = 1;
-        response.put("status", status);
+        response.put("status", Status.FAILURE);
         response.put("statusInfo", statusInfo);
-        return new Gson().toJson(response, HashMap.class);
+        return new Gson().toJson(response, HashMap.class);//格式转换
     }
 
 }

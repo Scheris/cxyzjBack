@@ -22,6 +22,7 @@ public class TestServiceImpl implements ITestService {
     private UserJpaRepository userJpaRepository;
     private Response response;
 
+
     @Override
     public String findAll() {
         response = new Response();
@@ -40,7 +41,7 @@ public class TestServiceImpl implements ITestService {
         User user = userJpaRepository.findAllByuserId(ID);
         if (user != null) {
             response.insert(user);
-            response.insert(Token.createToken(user));
+            response.insert("token", Token.createToken(user).getToken());
             response.insert("hello", 1212);
             return response.SendSuccess();
         } else {
@@ -56,7 +57,7 @@ public class TestServiceImpl implements ITestService {
         user.setGender(gender);
         user.setPassword(password);
         response.insert(userJpaRepository.save(user));
-        response.insert(Token.createToken(user));
+        response.insert("token", Token.createToken(user).getToken());
         return response.SendSuccess();
     }
 }

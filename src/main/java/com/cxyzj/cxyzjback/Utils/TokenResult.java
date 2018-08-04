@@ -1,6 +1,5 @@
 package com.cxyzj.cxyzjback.Utils;
 
-import com.cxyzj.cxyzjback.Bean.Template;
 import lombok.Data;
 
 /**
@@ -10,14 +9,9 @@ import lombok.Data;
  * @Description:
  */
 @Data
-public class TokenResult implements Template {
+public class TokenResult  {
     //todo 待实现
     private boolean status;//表示结果成功还是失败
-
     private String token;
 
-    @Override
-    public String getClassName() {
-        return "token";
-    }
 }

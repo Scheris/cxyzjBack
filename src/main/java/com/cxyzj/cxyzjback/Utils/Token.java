@@ -1,6 +1,5 @@
 package com.cxyzj.cxyzjback.Utils;
 
-import com.cxyzj.cxyzjback.Bean.Template;
 import com.cxyzj.cxyzjback.Bean.user.User;
 
 /**
@@ -22,6 +21,4 @@ public class Token  {
         //todo 待实现
         return new TokenResult();
     }
-
-
 }

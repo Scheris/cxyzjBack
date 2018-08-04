@@ -1,7 +1,7 @@
 package com.cxyzj.cxyzjback.Bean.user;
 
-import com.cxyzj.cxyzjback.Bean.Template;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -14,14 +14,17 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name = "attention")
-public class Attention implements Template {
+public class Attention  {
     @Id
+    @GeneratedValue(generator = "SnowflakeIdGenerator")//自定义ID生成器
+    @GenericGenerator(name = "SnowflakeIdGenerator", strategy = "com.cxyzj.cxyzjback.Utils.SnowflakeIdGenerator")
     @Column(name = "attention_id")
     private String attentionId;
+    @Column(name = "user_id")
+    private String userId;
+    @Column(name = "target_user")
+    private String targetUser;
+    @Column(name = "status")
+    private int status;
 
-    @Column(name="user_id")
-    @Override
-    public String getClassName() {
-        return "attention";
-    }
 }

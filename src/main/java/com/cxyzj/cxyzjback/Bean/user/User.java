@@ -1,6 +1,5 @@
 package com.cxyzj.cxyzjback.Bean.user;
 
-import com.cxyzj.cxyzjback.Bean.Template;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -10,44 +9,39 @@ import javax.persistence.*;
 /**
  * @Package com.cxyzj.cxyzjback.Template
  * @Author Yaser
- * @Date 2018/07/29 9:57
+ * @Date 2018/08/04 15:57
  * @Description:
  */
 @Entity
 @Data
 @Table(name = "user")
-public class User implements Template {
-
+public class User {
     @Id
-    @GeneratedValue(generator = "SnowflakeIdGenerator")
+    @GeneratedValue(generator = "SnowflakeIdGenerator")//自定义ID生成器
     @GenericGenerator(name = "SnowflakeIdGenerator", strategy = "com.cxyzj.cxyzjback.Utils.SnowflakeIdGenerator")
     @Column(name = "user_id")
-    private String userId;
+    private String userId;//小驼峰命名
     @Column(name = "password")
-    private String password = "sss";
+    private String password;
     @Column(name = "nickname")
-    private String nickname = "sss";
+    private String nickname;
     @Column(name = "gender")
-    private String gender = "sss";
+    private String gender;
     @Column(name = "email")
-    private String email = "sss";
+    private String email;
     @Column(name = "head_url")
-    private String headUrl = "sss";
+    private String headUrl;
     @Column(name = "bg_url")
-    private String bgUrl = "sss";
+    private String bgUrl;
     @Column(name = "introduce")
-    private String introduce = "sss";
+    private String introduce;
     @Column(name = "regist_data")
-    private String registDate = "sss";
+    private String registDate;
     @Column(name = "status")
-    private int status = 1;
+    private int status;
     @Column(name = "phone")
-    private String phone = "sss";
+    private String phone;
     @Column(name = "theme_color")
-    private String themeColor = "ss";
+    private String themeColor;
 
-    @Override
-    public String getClassName() {
-        return "user";
-    }
 }

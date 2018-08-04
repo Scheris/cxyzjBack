@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/cxyzj?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 15250823423wyX
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+logging:
+  level:
+    org.springframework.web: debug
+    org.mybatis: debug
+    com.dy.springboot.server.mapper: debug
+    com.spring.jiminshiro.mapper: debug
+server:
+  port: 8080
