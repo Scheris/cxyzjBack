@@ -1,6 +1,7 @@
 package com.cxyzj.cxyzjback.Repository;
 
-import com.cxyzj.cxyzjback.Bean.User;
+import com.cxyzj.cxyzjback.Bean.user.User;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -12,7 +13,9 @@ import java.util.List;
  * @Description:
  */
 public interface UserJpaRepository extends JpaRepository<User, String> {
-    User findAllById(String user_id);
+    User findAllByuserId(String user_id);
+
+    User findAllByPhoneOrEmail(String phone, String email);
 
     List<User> findAll();
 }
