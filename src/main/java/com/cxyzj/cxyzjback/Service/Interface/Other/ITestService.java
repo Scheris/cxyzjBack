@@ -1,4 +1,4 @@
-package com.cxyzj.cxyzjback.Service;
+package com.cxyzj.cxyzjback.Service.Interface.Other;
 
 /**
  * @Package com.cxyzj.cxyzjback.Service

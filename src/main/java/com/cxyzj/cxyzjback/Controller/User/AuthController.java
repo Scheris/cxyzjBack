@@ -1,6 +1,6 @@
-package com.cxyzj.cxyzjback.Controller;
+package com.cxyzj.cxyzjback.Controller.User;
 
-import com.cxyzj.cxyzjback.Service.AuthService;
+import com.cxyzj.cxyzjback.Service.Interface.User.AuthService;
 import com.cxyzj.cxyzjback.Utils.Response;
 import com.cxyzj.cxyzjback.Utils.Status;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,6 @@
-package com.cxyzj.cxyzjback.Bean.user;
+package com.cxyzj.cxyzjback.Bean.User;
 
 import lombok.Data;
-import lombok.Getter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,10 +8,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * @Package com.cxyzj.cxyzjback.Bean.user
+ * @Package com.cxyzj.cxyzjback.Bean.User
  * @Author Yaser
  * @Date 2018/08/09 15:52
- * @Description:
+ * @Description: 用户角色表
  */
 @Data
 @Entity
@@ -25,6 +24,4 @@ public class Role {
     private String role;
     @Column(name = "role_info")
     private String roleInfo;
-
-
 }

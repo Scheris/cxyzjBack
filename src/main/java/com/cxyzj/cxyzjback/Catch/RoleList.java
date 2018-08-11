@@ -1,7 +1,7 @@
 package com.cxyzj.cxyzjback.Catch;
 
-import com.cxyzj.cxyzjback.Bean.user.Role;
-import com.cxyzj.cxyzjback.Repository.UserRoleJpaRepository;
+import com.cxyzj.cxyzjback.Bean.User.Role;
+import com.cxyzj.cxyzjback.Repository.User.UserRoleJpaRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

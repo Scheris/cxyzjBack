@@ -1,6 +1,6 @@
 package com.cxyzj.cxyzjback.Data.User;
 
-import com.cxyzj.cxyzjback.Bean.user.User;
+import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Catch.RoleList;
 import lombok.Data;
 

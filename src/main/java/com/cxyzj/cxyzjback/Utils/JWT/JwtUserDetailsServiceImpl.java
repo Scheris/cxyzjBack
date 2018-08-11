@@ -1,8 +1,7 @@
 package com.cxyzj.cxyzjback.Utils.JWT;
 
-import com.cxyzj.cxyzjback.Bean.user.User;
-import com.cxyzj.cxyzjback.Repository.UserJpaRepository;
-import com.cxyzj.cxyzjback.Utils.JWT.JwtUserFactory;
+import com.cxyzj.cxyzjback.Bean.User.User;
+import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +29,7 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userJpaRepository.findByuserId(username);
         if (user == null) {
-            throw new UsernameNotFoundException(String.format("No user found with userId '%s'", username));
+            throw new UsernameNotFoundException(String.format("No User found with userId '%s'", username));
         } else {
             return JwtUserFactory.create(user);
         }

@@ -1,20 +1,15 @@
-package com.cxyzj.cxyzjback.Service.impl;
+package com.cxyzj.cxyzjback.Service.impl.User;
 
-import com.cxyzj.cxyzjback.Bean.user.Role;
-import com.cxyzj.cxyzjback.Bean.user.User;
+import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Data.User.LoginResult;
-import com.cxyzj.cxyzjback.Repository.UserJpaRepository;
-import com.cxyzj.cxyzjback.Repository.UserRoleJpaRepository;
-import com.cxyzj.cxyzjback.Service.AuthService;
+import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
+import com.cxyzj.cxyzjback.Service.Interface.User.AuthService;
 import com.cxyzj.cxyzjback.Utils.JWT.JWTUtils;
 import com.cxyzj.cxyzjback.Utils.Response;
 import com.cxyzj.cxyzjback.Utils.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.IllegalFormatException;
-import java.util.List;
 
 /**
  * @Package com.cxyzj.cxyzjback.Service.impl

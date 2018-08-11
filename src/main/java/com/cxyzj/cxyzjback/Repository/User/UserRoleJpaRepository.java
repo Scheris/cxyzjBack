@@ -1,6 +1,6 @@
-package com.cxyzj.cxyzjback.Repository;
+package com.cxyzj.cxyzjback.Repository.User;
 
-import com.cxyzj.cxyzjback.Bean.user.Role;
+import com.cxyzj.cxyzjback.Bean.User.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

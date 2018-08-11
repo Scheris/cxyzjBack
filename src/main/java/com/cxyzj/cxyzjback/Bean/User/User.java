@@ -1,4 +1,4 @@
-package com.cxyzj.cxyzjback.Bean.user;
+package com.cxyzj.cxyzjback.Bean.User;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -14,7 +14,7 @@ import javax.persistence.*;
  */
 @Entity
 @Data
-@Table(name = "user")
+@Table(name = "User")
 public class User {
     @Id
     @GeneratedValue(generator = "SnowflakeIdGenerator")//自定义ID生成器

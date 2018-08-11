@@ -1,7 +1,7 @@
 package com.cxyzj.cxyzjback.Utils.JWT;
 
 
-import com.cxyzj.cxyzjback.Bean.user.User;
+import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Catch.RoleList;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.DefaultClaims;
@@ -42,7 +42,7 @@ public class JWTUtils {
                 setExpiration(generateExpiration(hour)).
                 setIssuedAt(new Date()).setIssuer("cxyzj").
                 setSubject("Token").
-                setAudience("user").
+                setAudience("User").
                 setId(UUID.randomUUID().toString()).
                 signWith(SignatureAlgorithm.HS512, KEY).
                 compact();

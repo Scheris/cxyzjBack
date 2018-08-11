@@ -1,6 +1,6 @@
 package com.cxyzj.cxyzjback.Utils.JWT;
 
-import com.cxyzj.cxyzjback.Bean.user.User;
+import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Catch.RoleList;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

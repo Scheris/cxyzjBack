@@ -1,8 +1,8 @@
-package com.cxyzj.cxyzjback.Service.impl;
+package com.cxyzj.cxyzjback.Service.impl.Other;
 
-import com.cxyzj.cxyzjback.Bean.user.User;
-import com.cxyzj.cxyzjback.Repository.UserJpaRepository;
-import com.cxyzj.cxyzjback.Service.ITestService;
+import com.cxyzj.cxyzjback.Bean.User.User;
+import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
+import com.cxyzj.cxyzjback.Service.Interface.Other.ITestService;
 import com.cxyzj.cxyzjback.Utils.Response;
 import com.cxyzj.cxyzjback.Utils.Status;
 import org.springframework.beans.factory.annotation.Autowired;
