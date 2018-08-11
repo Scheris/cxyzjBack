@@ -13,9 +13,14 @@ import java.util.List;
  * @Description:
  */
 public interface UserJpaRepository extends JpaRepository<User, String> {
-    User findAllByuserId(String user_id);
+    User findByEmailAndPassword(String email, String password);
 
-    User findAllByPhoneOrEmail(String phone, String email);
+    User findByPhoneAndPassword(String Phone, String password);
+
+    User findByuserId(String userId);
+
 
     List<User> findAll();
+
+
 }

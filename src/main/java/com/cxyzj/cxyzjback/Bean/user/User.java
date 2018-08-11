@@ -35,13 +35,22 @@ public class User {
     private String bgUrl;
     @Column(name = "introduce")
     private String introduce;
-    @Column(name = "regist_data")
+    @Column(name = "regist_date")
     private String registDate;
-    @Column(name = "status")
-    private int status;
+    @Column(name = "role_id")
+    private int roleId;
     @Column(name = "phone")
     private String phone;
     @Column(name = "theme_color")
     private String themeColor;
-
+    @Column(name = "fans")
+    private int fans;
+    @Column(name = "attentions")
+    private int attentions;
+    @Column(name = "discussions")
+    private int discussions;
+    @Column(name = "comments")
+    private int comments;
+    @Column(name = "articles")
+    private int articles;
 }

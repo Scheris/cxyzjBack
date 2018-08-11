@@ -4,7 +4,7 @@ import com.cxyzj.cxyzjback.Bean.user.User;
 import com.cxyzj.cxyzjback.Repository.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.ITestService;
 import com.cxyzj.cxyzjback.Utils.Response;
-import com.cxyzj.cxyzjback.Utils.Token;
+import com.cxyzj.cxyzjback.Utils.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,30 +22,27 @@ public class TestServiceImpl implements ITestService {
     private UserJpaRepository userJpaRepository;
     private Response response;
 
-
     @Override
     public String findAll() {
         response = new Response();
         User user[] = userJpaRepository.findAll().toArray(new User[0]);
         if (user.length != 0) {
             response.insert(user);
-            return response.SendSuccess();
+            return response.sendSuccess();
         } else {
-            return response.SendFailure("还没有用户");
+            return response.sendFailure(Status.NONE_USER,"还没有用户");
         }
     }
 
     @Override
-    public String findAllByID(String ID) {
+    public String findByID(String ID) {
         response = new Response();
-        User user = userJpaRepository.findAllByuserId(ID);
+        User user = userJpaRepository.findByuserId(ID);
         if (user != null) {
             response.insert(user);
-            response.insert("token", Token.createToken(user).getToken());
-            response.insert("hello", 1212);
-            return response.SendSuccess();
+            return response.sendSuccess();
         } else {
-            return response.SendFailure("没有该用户");
+            return response.sendFailure(Status.INVALID_USER,"用户不存在");
         }
     }
 
@@ -57,7 +54,6 @@ public class TestServiceImpl implements ITestService {
         user.setGender(gender);
         user.setPassword(password);
         response.insert(userJpaRepository.save(user));
-        response.insert("token", Token.createToken(user).getToken());
-        return response.SendSuccess();
+        return response.sendSuccess();
     }
 }

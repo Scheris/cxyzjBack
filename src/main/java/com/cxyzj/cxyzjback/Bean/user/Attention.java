@@ -24,7 +24,6 @@ public class Attention  {
     private String userId;
     @Column(name = "target_user")
     private String targetUser;
-    @Column(name = "status")
+    @Column(name = "status_id")
     private int status;
-
 }

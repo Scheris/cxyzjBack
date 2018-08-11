@@ -10,9 +10,14 @@ spring:
     show-sql: true
 logging:
   level:
-    org.springframework.web: debug
+    org.springframework:
+      web: debug
+      data: debug
+      security: debug
     org.mybatis: debug
     com.dy.springboot.server.mapper: debug
     com.spring.jiminshiro.mapper: debug
 server:
   port: 8080
+
+
