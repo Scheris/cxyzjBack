@@ -25,7 +25,8 @@ public class TestController {
     private ITestService userService;
 
     @GetMapping(value = "/{userId}")
-    @PreAuthorize("hasRole('ROLE_PEOPLE') and principal.username.equals(#userId)")
+    @PreAuthorize("hasRole('ROLE_USER') and principal.username.equals(#userId)")
+//判断用户是否有USER权限，同时判断传来的userid是否与token里的id一致
     public String getUser(@PathVariable(name = "userId") String userId) {
         log.info(SecurityContextHolder.getContext().getAuthentication().getName());
         return userService.findByID(userId);

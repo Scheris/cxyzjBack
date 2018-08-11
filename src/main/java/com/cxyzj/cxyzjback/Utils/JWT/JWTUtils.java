@@ -28,8 +28,6 @@ public class JWTUtils {
     private String userId;
     @Getter
     private String role;
-    @Getter
-    private String nickname;
 
     private RoleList roles = RoleList.getRoles();
 
@@ -74,7 +72,6 @@ public class JWTUtils {
         DefaultClaims defaultClaims = new DefaultClaims();
         defaultClaims.put("userId", user.getUserId());
         defaultClaims.put("role", roles.getRole(user.getRoleId()));
-        defaultClaims.put("nickname", user.getNickname());
         return defaultClaims;
     }
 
@@ -89,7 +86,6 @@ public class JWTUtils {
         if (token != null && token.startsWith(TOKEN_PREFIX)) {
             token = token.replace(TOKEN_PREFIX, "");//去掉前缀
             Claims claims = Jwts.parser().setSigningKey(KEY).parseClaimsJws(token).getBody();//读取token信息
-            this.nickname = (String) claims.get("nickname");
             this.role = (String) claims.get("role");
             this.userId = (String) claims.get("userId");
             log.info("id:" + userId);

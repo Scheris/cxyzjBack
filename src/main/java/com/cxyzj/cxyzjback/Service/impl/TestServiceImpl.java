@@ -26,12 +26,8 @@ public class TestServiceImpl implements ITestService {
     public String findAll() {
         response = new Response();
         User user[] = userJpaRepository.findAll().toArray(new User[0]);
-        if (user.length != 0) {
-            response.insert(user);
-            return response.sendSuccess();
-        } else {
-            return response.sendFailure(Status.NONE_USER,"还没有用户");
-        }
+        response.insert(user);
+        return response.sendSuccess();
     }
 
     @Override
@@ -42,7 +38,7 @@ public class TestServiceImpl implements ITestService {
             response.insert(user);
             return response.sendSuccess();
         } else {
-            return response.sendFailure(Status.INVALID_USER,"用户不存在");
+            return response.sendFailure(Status.NONE_USER,"用户不存在");
         }
     }
 

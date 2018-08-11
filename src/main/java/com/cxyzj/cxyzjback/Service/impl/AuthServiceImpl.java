@@ -53,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
             response.insert("token", token);
             return response.sendSuccess();
         } else {
-            return response.sendFailure(Status.INVALID_USER, "用户不存在！");
+            return response.sendFailure(Status.NONE_USER, "用户不存在！");
         }
 
     }
