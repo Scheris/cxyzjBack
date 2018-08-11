@@ -9,6 +9,7 @@ package com.cxyzj.cxyzjback.Utils;
 public final class Status {
     //操作成功
     public static final int SUCCESS = 200;
+    //操作失败
     public static final int FAILURE = 400;
     //Token操作码101~110
     public static final int TOKEN_EXPIRED = 101;//token已过期
@@ -22,6 +23,8 @@ public final class Status {
     public static final int EMAIL_HAS_REGISTER = 115;//该邮箱已注册
     public static final int NICKNAME_EXIST = 116;//昵称已存在
     public static final int WRONG_PASSWORD = 117;//密码错误
+    public static final int CODE_SEND_FAILURE = 118;//验证码发送失败
+    public static final int OUT_OF_TIME = 119;//验证过期
     //article操作码131~160
 
 

@@ -2,6 +2,7 @@ package com.cxyzj.cxyzjback.Service.impl;
 
 import com.cxyzj.cxyzjback.Bean.user.Role;
 import com.cxyzj.cxyzjback.Bean.user.User;
+import com.cxyzj.cxyzjback.Data.User.LoginResult;
 import com.cxyzj.cxyzjback.Repository.UserJpaRepository;
 import com.cxyzj.cxyzjback.Repository.UserRoleJpaRepository;
 import com.cxyzj.cxyzjback.Service.AuthService;
@@ -38,19 +39,22 @@ public class AuthServiceImpl implements AuthService {
         JWTUtils jwtUtils = new JWTUtils();
         User user;
         if (email != null) {
-            user = userJpaRepository.findByEmailAndPassword(email, password);
+            user = userJpaRepository.findByEmailAndPassword(email, password);//读取信息
         } else {
             if (phone == null) {
                 throw new NoSuchFieldException("phone字段与email字段不可同时为空！");
             } else {
-                user = userJpaRepository.findByPhoneAndPassword(phone, password);
+                user = userJpaRepository.findByPhoneAndPassword(phone, password);//读取信息
             }
         }
         response = new Response();
         if (user != null) {
             String token = jwtUtils.generateToken(user);//生成用户token
             log.info("token:  " + token);
+            //注意：后端从数据库中查找到的数据不可以直接返回，需要重新自定义一个数据结构！
+            LoginResult loginResult = new LoginResult(user);//转换返回的数据为前端需要的数据
             response.insert("token", token);
+            response.insert("user", loginResult);
             return response.sendSuccess();
         } else {
             return response.sendFailure(Status.NONE_USER, "用户不存在！");

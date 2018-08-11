@@ -7,8 +7,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
-
 
 /**
  * @Package com.cxyzj.cxyzjback.Controller
@@ -25,10 +23,10 @@ public class TestController {
     private ITestService userService;
 
     @GetMapping(value = "/{userId}")
-    @PreAuthorize("hasRole('ROLE_USER') and principal.username.equals(#userId)")
-//判断用户是否有USER权限，同时判断传来的userid是否与token里的id一致
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#userId)")
+    //判断用户是否有这些权限中的一种，同时判断传来的userid是否与token里的id一致
     public String getUser(@PathVariable(name = "userId") String userId) {
-        log.info(SecurityContextHolder.getContext().getAuthentication().getName());
+        log.info(SecurityContextHolder.getContext().getAuthentication().getName());//读取用户id
         return userService.findByID(userId);
     }
 }

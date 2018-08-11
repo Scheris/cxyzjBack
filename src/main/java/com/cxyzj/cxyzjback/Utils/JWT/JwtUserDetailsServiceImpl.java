@@ -1,4 +1,4 @@
-package com.cxyzj.cxyzjback.Service.impl;
+package com.cxyzj.cxyzjback.Utils.JWT;
 
 import com.cxyzj.cxyzjback.Bean.user.User;
 import com.cxyzj.cxyzjback.Repository.UserJpaRepository;

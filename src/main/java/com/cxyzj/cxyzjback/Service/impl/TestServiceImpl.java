@@ -43,7 +43,7 @@ public class TestServiceImpl implements ITestService {
     }
 
     @Override
-    public String addUser(String email, String password, String gender) {
+    public String addUser(String email, String password, int gender) {
         response = new Response();
         User user = new User();
         user.setEmail(email);

@@ -26,7 +26,7 @@ public class User {
     @Column(name = "nickname")
     private String nickname;
     @Column(name = "gender")
-    private String gender;
+    private int gender;
     @Column(name = "email")
     private String email;
     @Column(name = "head_url")
