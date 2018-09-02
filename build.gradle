@@ -61,5 +61,12 @@ dependencies {
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-cache
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-cache', version: '2.0.4.RELEASE'
+    compile group: 'redis.clients', name: 'jedis', version: '2.7.3'
+
+    compile group: 'com.aliyun', name: 'aliyun-java-sdk-core', version: '3.7.1'
+
+    compile group: 'com.aliyun', name: 'aliyun-java-sdk-dysmsapi', version: '1.1.0'
+
+    compile fileTree(dir: 'lib', includes: ['*jar'])
 
 }

@@ -65,5 +65,6 @@ public class Response {
         return new Gson().toJson(response, HashMap.class);//格式转换
     }
 
+
 }
 

@@ -29,4 +29,5 @@ public class TestController {
         log.info(SecurityContextHolder.getContext().getAuthentication().getName());//读取用户id
         return userService.findByID(userId);
     }
+
 }

@@ -19,7 +19,7 @@ import javax.persistence.Table;
 public class Role {
     @Id
     @Column(name = "role_id")
-    private int roleId;
+    private int roleId = 0;
     @Column(name = "role")
     private String role;
     @Column(name = "role_info")

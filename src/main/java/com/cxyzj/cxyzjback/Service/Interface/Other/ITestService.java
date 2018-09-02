@@ -11,5 +11,6 @@ public interface ITestService {
 
     String findByID(String ID);
 
-    String addUser(String email,String password,int gender);
+    String addUser(String email, String password, int gender, String nickname, String phone, String headUrl);
+
 }

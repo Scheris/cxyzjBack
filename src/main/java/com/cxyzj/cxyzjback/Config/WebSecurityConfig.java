@@ -52,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/v1/User/auth/**").permitAll()//允许/v1/User/auth/下的所有请求
+                .antMatchers("/v1/user/**").permitAll()//允许/v1/User/auth/下的所有请求
                 .anyRequest().authenticated();
         http.headers().cacheControl();
         http.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);//注册过滤器

@@ -25,6 +25,7 @@ public final class Status {
     public static final int WRONG_PASSWORD = 117;//密码错误
     public static final int CODE_SEND_FAILURE = 118;//验证码发送失败
     public static final int OUT_OF_TIME = 119;//验证过期
+    public static final int USER_HAS_FOLLOWED = 120;
     //article操作码131~160
 
 
@@ -36,5 +37,7 @@ public final class Status {
 
     //其它操作码330~399
     public static final int NO_SUCH_FIELD = 331;
+
+    public static final int REDIS_NOT_START = 404;
 
 }

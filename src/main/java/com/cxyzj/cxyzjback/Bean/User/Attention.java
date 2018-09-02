@@ -26,4 +26,6 @@ public class Attention  {
     private String targetUser;
     @Column(name = "status_id")
     private int status;
+
+
 }
