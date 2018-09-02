@@ -20,7 +20,6 @@ import java.util.Random;
 /**
  * 验证码发送类
  * @author 夏
-
  */
 
 public class CodeSend {
