@@ -9,4 +9,6 @@ import com.cxyzj.cxyzjback.Bean.User.Attention;
  */
 public interface UserListGetService {
     String getAttentionList(int pageNum);
+
+    String getFansList(int pageNum);
 }

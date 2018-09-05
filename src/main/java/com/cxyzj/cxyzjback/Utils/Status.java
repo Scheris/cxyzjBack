@@ -25,7 +25,8 @@ public final class Status {
     public static final int WRONG_PASSWORD = 117;//密码错误
     public static final int CODE_SEND_FAILURE = 118;//验证码发送失败
     public static final int OUT_OF_TIME = 119;//验证过期
-    public static final int USER_HAS_FOLLOWED = 120;
+    public static final int USER_HAS_FOLLOWED = 120;  //用户已关注
+    public static final int USER_NOT_FOLLOWED = 121;//该用户未关注
     //article操作码131~160
 
 

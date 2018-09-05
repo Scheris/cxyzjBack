@@ -122,10 +122,10 @@ public class UserInfoController {
         return userInfoService.follow(targetId);
     }
 
-//    @DeleteMapping(value = "/follow/{userId}")
-//    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-//    public String delFollow(@PathVariable(name = "userId") String targetId) {
-//        return userInfoService.delFollow(targetId);
-//    }
+    @DeleteMapping(value = "/follow/{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String delFollow(@PathVariable(name = "userId") String targetId) {
+        return userInfoService.delFollow(targetId);
+    }
 
 }

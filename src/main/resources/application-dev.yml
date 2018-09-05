@@ -17,8 +17,6 @@ spring:
       pool:
         max-idle: 8
         min-idle: 0
-        max-wait: -1
-    timeout: 5000
 logging:
   level:
     org.springframework:

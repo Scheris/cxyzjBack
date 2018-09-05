@@ -25,13 +25,13 @@ public interface UserAttentionJpaRepository extends JpaRepository<Attention, Int
     List findAll(int startIndex, int i);
 
     @Transactional
-    @Query(value = "select * from attention where user_id=?3 LIMIT ?1,?2", nativeQuery = true)
-    Attention findAttention(int startIndex, int i, String userId);
+    @Query(value = "select * from attention where user_id=?3 and (status_id=201 or status_id=203) LIMIT ?1,?2", nativeQuery = true)
+    Attention[] findAttention(int startIndex, int i, String userId);
 
     @Transactional
     @Modifying
-    @Query(value = "update attention p set p.status_id=?1 where p.target_user=?2", nativeQuery = true)
-    void updateStatusByTargetUser(int status, String targetId);
+    @Query(value = "update attention p set p.status_id=?1 where p.user_id=?2 and p.target_user=?3", nativeQuery = true)
+    void updateStatusByUserAndTargetUser(int status, String userId, String targetId);
 
     @Transactional
     @Modifying
@@ -41,6 +41,12 @@ public interface UserAttentionJpaRepository extends JpaRepository<Attention, Int
     @Transactional
     void deleteByUserId(String userId);
 
+    @Transactional
+    void deleteByUserIdAndTargetUser(String userId, String targetUser);
+
+    @Transactional
+    @Query(value = "select * from attention where target_user=?3 and (status_id=201 or status_id=203) LIMIT ?1,?2", nativeQuery = true)
+    Attention[] findFans(int startIndex, int i, String userId);
 
 
 //    String findAttentionBy

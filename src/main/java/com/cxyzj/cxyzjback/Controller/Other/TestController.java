@@ -1,6 +1,7 @@
 package com.cxyzj.cxyzjback.Controller.Other;
 
 import com.cxyzj.cxyzjback.Service.Interface.Other.ITestService;
+import com.cxyzj.cxyzjback.Service.impl.Other.TestServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

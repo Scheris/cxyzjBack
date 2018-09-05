@@ -63,6 +63,7 @@ public class AuthServiceImpl implements AuthService {
             UserBasic loginResult = new UserBasic(user);//转换返回的数据为前端需要的数据
             response.insert("token", token);
             response.insert("user", loginResult);
+            response.insert("refresh_token",jwtUtils.generateRefreshToken(user));
             return response.sendSuccess();
         } else {
             return response.sendFailure(Status.NONE_USER, "用户名或密码错误！");
@@ -154,8 +155,10 @@ public class AuthServiceImpl implements AuthService {
         }else{
             redisKeyDto.setKeys(email);
             RedisKeyDto result = redisService.redisGet(redisKeyDto);
-            if(result != null&&result.getValues().equals(String.valueOf(code)))
+            if(result != null&&result.getValues().equals(String.valueOf(code))) {
+                redisService.delete(redisKeyDto);
                 return response.sendSuccess();
+            }
             return response.sendFailure(Status.CODE_ERROR,"验证码错误");
         }
 

@@ -1,5 +1,7 @@
 package com.cxyzj.cxyzjback.Service.Interface.Other;
 
+import org.springframework.stereotype.Service;
+
 /**
  * @Package com.cxyzj.cxyzjback.Service
  * @Author Yaser

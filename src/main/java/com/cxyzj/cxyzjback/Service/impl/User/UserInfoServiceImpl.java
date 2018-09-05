@@ -407,32 +407,51 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     /**
      * @Description 关注用户（ROLE_USER）
-     * @param targetId （其他）用户id
-     * @return 其他用户（详细）信息
+     * @param targetId （目标）用户id
+     * @return
      */
     @Override
     public String follow(String targetId) {
         user = new User();
         response = new Response();
+        Attention attention;
         userId = SecurityContextHolder.getContext().getAuthentication().getName();//读取token中的用户id
         //检查attention表中，是否有存在目标用户的关系
         if(userAttentionJpaRepository.findByUserIdAndTargetUser(userId, targetId) == null
                 && userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId) == null){
-            //如果没有，则创建 201 的关系
-            userAttentionJpaRepository.createAttention(userId, targetId, 201);
-            userAttentionJpaRepository.createAttention(targetId, userId, 202);
+            //如果没有，则创建 201 和202的关系
+            attention = new Attention();
+            attention.setUserId(userId);
+            attention.setTargetUser(targetId);
+            attention.setStatus(201);
+            userAttentionJpaRepository.save(attention);
+
+            Attention attention1 = new Attention();
+            attention1.setUserId(targetId);
+            attention1.setTargetUser(userId);
+            attention1.setStatus(202);
+            userAttentionJpaRepository.save(attention1);
             userJpaRepository.updateFansByUserId(userJpaRepository.getUserFans(targetId) + 1, targetId);
             userJpaRepository.updateAttentionsByUserId(userJpaRepository.getUserAttentions(userId) + 1, userId);
             response.insert("fans", userJpaRepository.getUserFans(targetId));
             return response.sendSuccess();
         }else if(userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId) != null &&
+                userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId).getStatus() != 202 &&
                 userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId).getStatus() != 203){
-            //如果有，但不是互相关注的状态，则更新状态码为203 (互相关注)
-
+            //如果有，但不是互相关注的状态，删除之前的201和202关系，创建203（互相关注）关系
             userAttentionJpaRepository.deleteByUserId(userId);
             userAttentionJpaRepository.deleteByUserId(targetId);
-            userAttentionJpaRepository.createAttention(userId, targetId, 203);
-            userAttentionJpaRepository.createAttention(targetId, userId, 203);
+            attention = new Attention();
+            attention.setUserId(userId);
+            attention.setTargetUser(targetId);
+            attention.setStatus(203);
+            userAttentionJpaRepository.save(attention);
+
+            Attention attention1 = new Attention();
+            attention1.setUserId(targetId);
+            attention1.setTargetUser(userId);
+            attention1.setStatus(203);
+            userAttentionJpaRepository.save(attention1);
 
             userJpaRepository.updateFansByUserId(userJpaRepository.getUserFans(targetId) + 1, targetId);
             userJpaRepository.updateAttentionsByUserId(userJpaRepository.getUserAttentions(userId) + 1, userId);
@@ -443,8 +462,37 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
     }
 
+    /**
+     * @Description 取消关注（ROLE_USER）
+     * @param targetId （目标）用户id
+     * @return
+     */
     @Override
     public String delFollow(String targetId) {
-        return null;
+        user = new User();
+        response = new Response();
+        userId = SecurityContextHolder.getContext().getAuthentication().getName();//读取token中的用户id
+        //判断关系是否存在
+        if(userAttentionJpaRepository.findByUserIdAndTargetUser(userId, targetId) != null
+                && userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId).getStatus() == 202){
+            //如果存在且不是互相关注的状态，则删除attention中的关系数据
+            userAttentionJpaRepository.deleteByUserIdAndTargetUser(userId, targetId);
+            userAttentionJpaRepository.deleteByUserIdAndTargetUser(targetId, userId);
+            userJpaRepository.updateFansByUserId(userJpaRepository.getUserFans(targetId) - 1, targetId);
+            userJpaRepository.updateAttentionsByUserId(userJpaRepository.getUserAttentions(userId) - 1, userId);
+            response.insert("fans", userJpaRepository.getUserFans(targetId));
+            return response.sendSuccess();
+        }else if(userAttentionJpaRepository.findByUserIdAndTargetUser(userId, targetId) != null
+                && userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId).getStatus() == 203) {
+            //如果存在且是互相关注的状态，将更新attention表中的关系为非互相关注（被关注）的状态
+            userAttentionJpaRepository.updateStatusByUserAndTargetUser(201, targetId, userId);
+            userAttentionJpaRepository.updateStatusByUserAndTargetUser(202, userId, targetId);
+            userJpaRepository.updateFansByUserId(userJpaRepository.getUserFans(targetId) - 1, targetId);
+            userJpaRepository.updateAttentionsByUserId(userJpaRepository.getUserAttentions(userId) - 1, userId);
+            response.insert("fans", userJpaRepository.getUserFans(targetId));
+            return response.sendSuccess();
+        }else {
+            return response.sendFailure(Status.USER_NOT_FOLLOWED,"该用户未关注");
+        }
     }
 }

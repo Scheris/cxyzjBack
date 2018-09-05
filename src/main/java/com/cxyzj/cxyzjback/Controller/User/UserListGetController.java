@@ -28,4 +28,10 @@ public class UserListGetController {
         return userListGetService.getAttentionList(pageNum);
     }
 
+    @GetMapping(value = "/fans_list/{page_num}")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String getFansList(@PathVariable(name = "page_num") int pageNum){
+        return userListGetService.getFansList(pageNum);
+    }
+
 }

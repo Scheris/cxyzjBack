@@ -7,6 +7,7 @@ import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Data.PageUtil;
 import com.cxyzj.cxyzjback.Data.User.OtherDetails;
 import com.cxyzj.cxyzjback.Data.User.OtherSimple;
+import com.cxyzj.cxyzjback.Data.User.UserList;
 import com.cxyzj.cxyzjback.Repository.User.UserAttentionJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.User.UserListGetService;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,7 +38,6 @@ public class UserListGetServiceImpl implements UserListGetService {
 
     @Autowired
     private UserAttentionJpaRepository userAttentionJpaRepository;
-    RedisKeyDto redisKeyDto;
     private Response response;
     private String userId;
     private User user;
@@ -45,34 +46,59 @@ public class UserListGetServiceImpl implements UserListGetService {
     public String getAttentionList(int pageNum) {
         response = new Response();
         userId = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        JSONArray jsonArray = new JSONArray();
-
         List<Attention> allAttention = userAttentionJpaRepository.findByUserId(userId);
         int totalRecord = allAttention.size();
 
         PageBean pb = new PageBean();
         pb.PageBean(pageNum, 9, totalRecord);
+
         int startIndex = pb.getStartIndex();
-
-        Attention attention = userAttentionJpaRepository.findAttention(startIndex, 9, userId);
-        int status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, attention.getTargetUser());
-        user = userJpaRepository.findByUserId(attention.getTargetUser());
-
-        OtherDetails otherDetails = new OtherDetails(user);
-        if(status == 201 || status == 203){
-            otherDetails.set_followed(true);
-            response.insert("attention", otherDetails);
-        }else{
-            response.insert("attention", otherDetails);
-        }
+        Attention attention[] = userAttentionJpaRepository.findAttention(startIndex, 9, userId);
 
         pb.setList(userAttentionJpaRepository.findAll(startIndex, 9));
-
         pb.setPageNum(pageNum);
 
+        List<UserList> otherDetailsList = new ArrayList<UserList>();
+        for(int i = 0; i<attention.length; i++){
+            user = userJpaRepository.findByUserId(attention[i].getTargetUser());
+            UserList userList = new UserList(user);
+            userList.set_followed(true);
+            otherDetailsList.add(userList);
+        }
 
+        response.insert("attentions", otherDetailsList);
         response.insert("page", new PageUtil(pb));
         return response.sendSuccess();
+    }
+
+    @Override
+    public String getFansList(int pageNum) {
+
+        response = new Response();
+        userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Attention> allAttention = userAttentionJpaRepository.findByUserId(userId);
+        int totalRecord = allAttention.size();
+
+        PageBean pb = new PageBean();
+        pb.PageBean(pageNum, 9, totalRecord);
+
+        int startIndex = pb.getStartIndex();
+        Attention attention[] = userAttentionJpaRepository.findFans(startIndex, 9, userId);
+
+        pb.setList(userAttentionJpaRepository.findAll(startIndex, 9));
+        pb.setPageNum(pageNum);
+
+        List<UserList> otherDetailsList = new ArrayList<UserList>();
+        for(int i = 0; i<attention.length; i++){
+
+            UserList userList = new UserList(userJpaRepository.findByUserId(attention[i].getUserId()));
+            userList.set_followed(true);
+            otherDetailsList.add(userList);
+        }
+
+        response.insert("attentions", otherDetailsList);
+        response.insert("page", new PageUtil(pb));
+        return response.sendSuccess();
+
     }
 }
