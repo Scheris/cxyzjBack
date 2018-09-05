@@ -91,7 +91,6 @@ public class UserListGetServiceImpl implements UserListGetService {
         List<UserList> userLists = new ArrayList<UserList>();
         for(int i = 0; i<attention.length; i++){
             int status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, attention[i].getUserId());
-
             UserList userList = new UserList(userJpaRepository.findByUserId(attention[i].getUserId()));
             if(status != 203){
                 userList.set_followed(false);
