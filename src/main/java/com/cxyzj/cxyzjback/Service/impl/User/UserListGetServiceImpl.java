@@ -58,15 +58,15 @@ public class UserListGetServiceImpl implements UserListGetService {
         pb.setList(userAttentionJpaRepository.findAll(startIndex, 9));
         pb.setPageNum(pageNum);
 
-        List<UserList> otherDetailsList = new ArrayList<UserList>();
+        List<UserList> userLists = new ArrayList<UserList>();
         for(int i = 0; i<attention.length; i++){
             user = userJpaRepository.findByUserId(attention[i].getTargetUser());
             UserList userList = new UserList(user);
             userList.set_followed(true);
-            otherDetailsList.add(userList);
+            userLists.add(userList);
         }
 
-        response.insert("attentions", otherDetailsList);
+        response.insert("attentions", userLists);
         response.insert("page", new PageUtil(pb));
         return response.sendSuccess();
     }
@@ -88,9 +88,9 @@ public class UserListGetServiceImpl implements UserListGetService {
         pb.setList(userAttentionJpaRepository.findAll(startIndex, 9));
         pb.setPageNum(pageNum);
 
-        List<UserList> otherDetailsList = new ArrayList<UserList>();
+        List<UserList> userLists = new ArrayList<UserList>();
         for(int i = 0; i<attention.length; i++){
-            int status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, attention[i].getTargetUser());
+            int status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, attention[i].getUserId());
 
             UserList userList = new UserList(userJpaRepository.findByUserId(attention[i].getUserId()));
             if(status != 203){
@@ -98,10 +98,10 @@ public class UserListGetServiceImpl implements UserListGetService {
             }else {
                 userList.set_followed(true);
             }
-            otherDetailsList.add(userList);
+            userLists.add(userList);
         }
 
-        response.insert("attentions", otherDetailsList);
+        response.insert("attentions", userLists);
         response.insert("page", new PageUtil(pb));
         return response.sendSuccess();
 
