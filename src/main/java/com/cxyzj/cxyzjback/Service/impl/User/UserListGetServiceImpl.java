@@ -47,8 +47,8 @@ public class UserListGetServiceImpl implements UserListGetService {
         response = new Response();
         userId = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Attention> allAttention = userAttentionJpaRepository.findByUserId(userId);
-        int totalRecord = allAttention.size();
 
+        int totalRecord = allAttention.size();
         PageBean pb = new PageBean();
         pb.PageBean(pageNum, 9, totalRecord);
 
