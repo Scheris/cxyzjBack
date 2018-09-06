@@ -36,7 +36,7 @@ public class User {
     @Column(name = "introduce")
     private String introduce = "这个人很懒，连介绍都没有(￢︿̫̿￢☆)";
     @Column(name = "regist_date")
-    private String registDate;
+    private long registDate;
     @Column(name = "role_id")
     private int roleId = 1;
     @Column(name = "phone")

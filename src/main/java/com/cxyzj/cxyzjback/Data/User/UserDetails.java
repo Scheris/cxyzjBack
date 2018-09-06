@@ -16,12 +16,12 @@ public class UserDetails {
     private String head_url;
     private String email;
     private String bg_url;
-    private String regist_date;
+    private long regist_date;
     private String phone;
     private String theme_color;
     private String role;
     private String introduce;
-    private String gender;
+    private int gender;
     private int attentions;
     private int fans;
     private int articles;
@@ -39,13 +39,7 @@ public class UserDetails {
         this.theme_color = user.getThemeColor();
         this.role = RoleList.getRoles().getRole(user.getRoleId());
         this.introduce = user.getIntroduce();
-        if(user.getGender() == 0){
-            this.gender = "男";
-        }else if(user.getGender() == 1){
-            this.gender = "女";
-        }else{
-            this.gender = "保密";
-        }
+        this.gender = user.getGender();
         this.attentions = user.getAttentions();
         this.fans = user.getFans();
         this.articles = user.getArticles();

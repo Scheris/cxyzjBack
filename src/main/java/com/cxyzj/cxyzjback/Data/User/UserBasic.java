@@ -17,7 +17,7 @@ public class UserBasic {
     private String head_url;
     private String role;
     private String introduce;
-    private String gender;
+    private int gender;
     private int attentions;
     private int articles;
     private int discussions;
@@ -33,13 +33,7 @@ public class UserBasic {
         this.role = RoleList.getRoles().getRole(user.getRoleId());
         this.discussions = user.getDiscussions();
         this.attentions = user.getAttentions();
-        if(user.getGender() == 0){
-            this.gender = "男";
-        }else if(user.getGender() == 1){
-            this.gender = "女";
-        }else{
-            this.gender = "保密";
-        }
+        this.gender = user.getGender();
         this.fans = user.getFans();
         this.introduce = user.getIntroduce();
     }

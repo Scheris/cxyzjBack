@@ -80,8 +80,7 @@ public class AuthServiceImpl implements AuthService {
     public String register(String nickname, String email, String password, int gender, String phone, String headUrl) {
 
         //注册时间
-        DateFormat dateTime = DateFormat.getDateTimeInstance();
-        String dt = dateTime.format(new Date());
+        long time = System.currentTimeMillis();
 
         JWTUtils jwtUtils = new JWTUtils();
         User user = new User();
@@ -100,7 +99,7 @@ public class AuthServiceImpl implements AuthService {
             user.setPassword(password);
             user.setGender(gender);
             user.setPhone(phone);
-            user.setRegistDate(dt);
+            user.setRegistDate(time);
             user.setHeadUrl(headUrl);
             user.setRoleId(1);
             userJpaRepository.save(user);
