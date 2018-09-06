@@ -117,7 +117,7 @@ public class CodeSend {
         try{
             Properties prop = new Properties();
             prop.setProperty("mail.transport.protocol", "smtp");
-            prop.setProperty("mail.smtp.host", "smtp.sina.cn");
+            prop.setProperty("mail.smtp.host", "smtp.qq.com");
             prop.setProperty("mail.smtp.auth", "true");
             prop.setProperty("mail.debug", "true");
 
