@@ -26,8 +26,6 @@ public interface UserJpaRepository extends JpaRepository<User, String> {
 
     User findByUserId(String userId);
 
-
-
     User findByEmail(String email);
 
     User findByPhone(String phone);
@@ -106,12 +104,12 @@ public interface UserJpaRepository extends JpaRepository<User, String> {
     @Query(value = "update user p set p.fans=?1 where user_id=?2", nativeQuery = true)
     void updateFansByUserId(int fans, String userId);
 
-    @Transactional
-    @Query(value = "select attentions from user where user_id=?1", nativeQuery = true)
-    int getUserAttentions(String userId);
 
-    @Transactional
-    @Modifying
-    @Query(value = "update user p set p.attentions=?1 where user_id=?2", nativeQuery = true)
-    void updateAttentionsByUserId(int attentions, String userId);
+    boolean existsByEmail(String email);
+
+    boolean existsByPhone(String phone);
+
+    boolean existsByNickname(String nickname);
+
+    boolean existsByUserId(String otherId);
 }

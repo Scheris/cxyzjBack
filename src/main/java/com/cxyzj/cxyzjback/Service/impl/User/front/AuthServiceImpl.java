@@ -1,11 +1,11 @@
-package com.cxyzj.cxyzjback.Service.impl.User;
+package com.cxyzj.cxyzjback.Service.impl.User.front;
 
 import com.cxyzj.cxyzjback.Bean.Redis.RedisKeyDto;
 import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Data.User.UserBasic;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.Other.RedisService;
-import com.cxyzj.cxyzjback.Service.Interface.User.AuthService;
+import com.cxyzj.cxyzjback.Service.Interface.User.front.AuthService;
 import com.cxyzj.cxyzjback.Utils.Code;
 import com.cxyzj.cxyzjback.Utils.CodeSend;
 import com.cxyzj.cxyzjback.Utils.JWT.JWTUtils;
@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.text.DateFormat;
-import java.util.Date;
 
 /**
  * @Package com.cxyzj.cxyzjback.Service.impl
@@ -85,12 +83,12 @@ public class AuthServiceImpl implements AuthService {
         JWTUtils jwtUtils = new JWTUtils();
         User user = new User();
         response = new Response();
-        if(userJpaRepository.findByEmail(email) != null){
+        if(userJpaRepository.existsByEmail(email)){
             return response.sendFailure(Status.EMAIL_HAS_REGISTER,"邮箱已经使用过了哦！换个邮箱试试？");
 
-        }else if(userJpaRepository.findByPhone(phone) != null){
+        }else if(userJpaRepository.existsByPhone(phone)){
             return response.sendFailure(Status.PHONE_HAS_REGISTER,"手机号码已经使用过了哦！换个号码试试？");
-        }else if(userJpaRepository.findByNickname(nickname) != null){
+        }else if(userJpaRepository.existsByNickname(nickname)){
             return response.sendFailure(Status.NICKNAME_EXIST,"昵称已被征用了哦，再换个试试？");
         }else{
 

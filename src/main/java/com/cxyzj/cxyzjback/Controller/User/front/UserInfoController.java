@@ -1,7 +1,7 @@
-package com.cxyzj.cxyzjback.Controller.User;
+package com.cxyzj.cxyzjback.Controller.User.front;
 
 
-import com.cxyzj.cxyzjback.Service.Interface.User.UserInfoService;
+import com.cxyzj.cxyzjback.Service.Interface.User.front.UserInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,7 +33,7 @@ public class UserInfoController {
     }
 
     @GetMapping(value = "/details/other/{userId}")
-    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#userId)")
+    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String getOtherDetail(@PathVariable(name = "userId") String userId) {
         return userInfoService.detailsOther(userId);
     }
@@ -87,19 +87,19 @@ public class UserInfoController {
     }
 
     @PostMapping(value = "/update_password")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#user_id)")
     public String updatePassword(@RequestParam String password, @RequestParam String user_id){
         return userInfoService.updatePassword(password, user_id);
     }
 
     @PostMapping(value = "/update_phone")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#user_id)")
     public String updatePhone(@RequestParam String phone, @RequestParam String user_id){
         return userInfoService.updatePhone(phone, user_id);
     }
 
     @PostMapping(value = "/update_email")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#user_id)")
     public String updateEmail(@RequestParam String email, @RequestParam String user_id){
         return userInfoService.updateEmail(email, user_id);
     }
@@ -111,7 +111,7 @@ public class UserInfoController {
     }
 
     @GetMapping(value = "/simple/other/{userId}")
-    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#userId)")
+    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String getOtherSimple(@PathVariable(name = "userId") String userId) {
         return userInfoService.simpleOther(userId);
     }

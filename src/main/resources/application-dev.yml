@@ -17,6 +17,13 @@ spring:
       pool:
         max-idle: 8
         min-idle: 0
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100Mb
+      max-request-size: 100Mb
+
+
 logging:
   level:
     org.springframework:
@@ -27,5 +34,4 @@ logging:
     com.dy.springboot.server.mapper: debug
     com.spring.jiminshiro.mapper: debug
 server:
-  port: 8080
-
+  port: 9527

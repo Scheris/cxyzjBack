@@ -1,4 +1,4 @@
-package com.cxyzj.cxyzjback.Service.Interface.User;
+package com.cxyzj.cxyzjback.Service.Interface.User.front;
 
 import com.cxyzj.cxyzjback.Bean.User.User;
 

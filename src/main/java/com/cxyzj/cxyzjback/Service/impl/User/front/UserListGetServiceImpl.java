@@ -1,28 +1,19 @@
-package com.cxyzj.cxyzjback.Service.impl.User;
+package com.cxyzj.cxyzjback.Service.impl.User.front;
 
 import com.cxyzj.cxyzjback.Bean.PageBean;
-import com.cxyzj.cxyzjback.Bean.Redis.RedisKeyDto;
 import com.cxyzj.cxyzjback.Bean.User.Attention;
 import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Data.PageUtil;
-import com.cxyzj.cxyzjback.Data.User.OtherDetails;
-import com.cxyzj.cxyzjback.Data.User.OtherSimple;
 import com.cxyzj.cxyzjback.Data.User.UserList;
 import com.cxyzj.cxyzjback.Repository.User.UserAttentionJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
-import com.cxyzj.cxyzjback.Service.Interface.User.UserListGetService;
+import com.cxyzj.cxyzjback.Service.Interface.User.front.UserListGetService;
 import com.cxyzj.cxyzjback.Utils.Response;
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**

@@ -1,8 +1,6 @@
-package com.cxyzj.cxyzjback.Controller.User;
+package com.cxyzj.cxyzjback.Controller.User.front;
 
-import com.cxyzj.cxyzjback.Bean.PageBean;
-import com.cxyzj.cxyzjback.Bean.User.Attention;
-import com.cxyzj.cxyzjback.Service.Interface.User.UserListGetService;
+import com.cxyzj.cxyzjback.Service.Interface.User.front.UserListGetService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

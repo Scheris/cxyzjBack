@@ -1,4 +1,4 @@
-package com.cxyzj.cxyzjback.Service.impl.User;
+package com.cxyzj.cxyzjback.Service.impl.User.front;
 
 import com.cxyzj.cxyzjback.Bean.Redis.RedisKeyDto;
 import com.cxyzj.cxyzjback.Bean.User.Attention;
@@ -10,7 +10,7 @@ import com.cxyzj.cxyzjback.Data.User.UserSimple;
 import com.cxyzj.cxyzjback.Repository.User.UserAttentionJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.Other.RedisService;
-import com.cxyzj.cxyzjback.Service.Interface.User.UserInfoService;
+import com.cxyzj.cxyzjback.Service.Interface.User.front.UserInfoService;
 import com.cxyzj.cxyzjback.Utils.Code;
 import com.cxyzj.cxyzjback.Utils.CodeSend;
 import com.cxyzj.cxyzjback.Utils.JWT.JWTUtils;
@@ -22,8 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -40,7 +38,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Autowired
     private UserAttentionJpaRepository userAttentionJpaRepository;
-    RedisKeyDto redisKeyDto;
+    private RedisKeyDto redisKeyDto;
     private Response response;
     private String userId;
     private User user;
@@ -99,9 +97,9 @@ public class UserInfoServiceImpl implements UserInfoService {
         response = new Response();
         OtherDetails userOther = new OtherDetails(userJpaRepository.findByUserId(otherId));
 
-        if(userJpaRepository.findByUserId(otherId) != null){
+        if(userJpaRepository.existsByUserId(otherId)){
             userId = SecurityContextHolder.getContext().getAuthentication().getName();
-            if(userAttentionJpaRepository.findByUserIdAndTargetUser(userId, otherId) != null){
+            if(userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, otherId)){
                 //根据自己（userId）和目标用户（targetId）查询关系表，如果关系存在，查询status，如果status=201：设置is_followed=true，
                 // 如果status=203: 互相关注，也设置is_followed=true
                 if(userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, otherId) == 201||
@@ -132,7 +130,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         response = new Response();
         userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        if(userJpaRepository.findByNickname(nickname) == null){
+        if(!userJpaRepository.existsByNickname(nickname)){
             userJpaRepository.updateNicknameByUserId(nickname, userId);
             user = userJpaRepository.findByUserId(userId);
             response.insert("nickname",user.getNickname());
@@ -169,14 +167,6 @@ public class UserInfoServiceImpl implements UserInfoService {
         userId = SecurityContextHolder.getContext().getAuthentication().getName();
         userJpaRepository.updateGenderByUserId(gender, userId);
         user = userJpaRepository.findByUserId(userId);
-
-        if(user.getGender() == 0){
-            gender = "男";
-        }else if(user.getGender() == 1){
-            gender = "女";
-        }else{
-            gender = "保密";
-        }
 
         response.insert("gender", gender);
         return response.sendSuccess();
@@ -386,9 +376,9 @@ public class UserInfoServiceImpl implements UserInfoService {
         response = new Response();
         OtherSimple userOther = new OtherSimple(userJpaRepository.findByUserId(otherId));
 
-        if(userJpaRepository.findByUserId(otherId) != null){
+        if(userJpaRepository.existsByUserId(otherId)){
             userId = SecurityContextHolder.getContext().getAuthentication().getName();
-            if(userAttentionJpaRepository.findByUserIdAndTargetUser(userId, otherId) != null){
+            if(userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, otherId)){
                 if(userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, otherId) == 201||
                         userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, otherId) == 203){
                     userOther.set_followed(true);
@@ -417,8 +407,8 @@ public class UserInfoServiceImpl implements UserInfoService {
         Attention attention;
         userId = SecurityContextHolder.getContext().getAuthentication().getName();//读取token中的用户id
         //检查attention表中，是否有存在目标用户的关系
-        if(userAttentionJpaRepository.findByUserIdAndTargetUser(userId, targetId) == null
-                && userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId) == null){
+        if(!userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, targetId)
+                && !userAttentionJpaRepository.existsByUserIdAndTargetUser(targetId, userId)){
             //如果没有，则创建 201 和202的关系
             attention = new Attention();
             attention.setUserId(userId);
@@ -432,10 +422,10 @@ public class UserInfoServiceImpl implements UserInfoService {
             attention1.setStatus(202);
             userAttentionJpaRepository.save(attention1);
             userJpaRepository.updateFansByUserId(userJpaRepository.getUserFans(targetId) + 1, targetId);
-            userJpaRepository.updateAttentionsByUserId(userJpaRepository.getUserAttentions(userId) + 1, userId);
+            userAttentionJpaRepository.updateAttentionsByUserId(userAttentionJpaRepository.getUserAttentions(userId) + 1, userId);
             response.insert("fans", userJpaRepository.getUserFans(targetId));
             return response.sendSuccess();
-        }else if(userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId) != null &&
+        }else if(!userAttentionJpaRepository.existsByUserIdAndTargetUser(targetId, userId)&&
                 userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId).getStatus() != 202 &&
                 userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId).getStatus() != 203){
             //如果有，但不是互相关注的状态，删除之前的201和202关系，创建203（互相关注）关系
@@ -454,7 +444,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             userAttentionJpaRepository.save(attention1);
 
             userJpaRepository.updateFansByUserId(userJpaRepository.getUserFans(targetId) + 1, targetId);
-            userJpaRepository.updateAttentionsByUserId(userJpaRepository.getUserAttentions(userId) + 1, userId);
+            userAttentionJpaRepository.updateAttentionsByUserId(userAttentionJpaRepository.getUserAttentions(userId) + 1, userId);
             response.insert("fans", userJpaRepository.getUserFans(targetId));
             return response.sendSuccess();
         } else {
@@ -473,22 +463,22 @@ public class UserInfoServiceImpl implements UserInfoService {
         response = new Response();
         userId = SecurityContextHolder.getContext().getAuthentication().getName();//读取token中的用户id
         //判断关系是否存在
-        if(userAttentionJpaRepository.findByUserIdAndTargetUser(userId, targetId) != null
+        if(userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, targetId)
                 && userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId).getStatus() == 202){
             //如果存在且不是互相关注的状态，则删除attention中的关系数据
             userAttentionJpaRepository.deleteByUserIdAndTargetUser(userId, targetId);
             userAttentionJpaRepository.deleteByUserIdAndTargetUser(targetId, userId);
             userJpaRepository.updateFansByUserId(userJpaRepository.getUserFans(targetId) - 1, targetId);
-            userJpaRepository.updateAttentionsByUserId(userJpaRepository.getUserAttentions(userId) - 1, userId);
+            userAttentionJpaRepository.updateAttentionsByUserId(userAttentionJpaRepository.getUserAttentions(userId) - 1, userId);
             response.insert("fans", userJpaRepository.getUserFans(targetId));
             return response.sendSuccess();
-        }else if(userAttentionJpaRepository.findByUserIdAndTargetUser(userId, targetId) != null
+        }else if(userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, targetId)
                 && userAttentionJpaRepository.findByUserIdAndTargetUser(targetId, userId).getStatus() == 203) {
             //如果存在且是互相关注的状态，将更新attention表中的关系为非互相关注（被关注）的状态
             userAttentionJpaRepository.updateStatusByUserAndTargetUser(201, targetId, userId);
             userAttentionJpaRepository.updateStatusByUserAndTargetUser(202, userId, targetId);
             userJpaRepository.updateFansByUserId(userJpaRepository.getUserFans(targetId) - 1, targetId);
-            userJpaRepository.updateAttentionsByUserId(userJpaRepository.getUserAttentions(userId) - 1, userId);
+            userAttentionJpaRepository.updateAttentionsByUserId(userAttentionJpaRepository.getUserAttentions(userId) - 1, userId);
             response.insert("fans", userJpaRepository.getUserFans(targetId));
             return response.sendSuccess();
         }else {

@@ -48,6 +48,17 @@ public interface UserAttentionJpaRepository extends JpaRepository<Attention, Int
     @Query(value = "select * from attention where target_user=?3 and (status_id=201 or status_id=203) LIMIT ?1,?2", nativeQuery = true)
     Attention[] findFans(int startIndex, int i, String userId);
 
+    @Transactional
+    @Query(value = "select attentions from user where user_id=?1", nativeQuery = true)
+    int getUserAttentions(String userId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update user p set p.attentions=?1 where user_id=?2", nativeQuery = true)
+    void updateAttentionsByUserId(int attentions, String userId);
+
+    boolean existsByUserIdAndTargetUser(String userId, String otherId);
+
 
 //    String findAttentionBy
 

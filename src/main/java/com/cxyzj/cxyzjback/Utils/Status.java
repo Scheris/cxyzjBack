@@ -27,6 +27,10 @@ public final class Status {
     public static final int OUT_OF_TIME = 119;//验证过期
     public static final int USER_HAS_FOLLOWED = 120;  //用户已关注
     public static final int USER_NOT_FOLLOWED = 121;//该用户未关注
+
+    public static final int COMMENT_HAS_DELETE=124;//评论已删除
+    public static final int USER_HAS_SUPPORT_OR_OBJECT = 125;//已支持或者已反对
+    public static final int FILE_UPLOAD_FAILURE=127;//文件上传失败
     //article操作码131~160
 
 

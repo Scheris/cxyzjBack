@@ -1,19 +1,11 @@
-package com.cxyzj.cxyzjback.Controller.User;
+package com.cxyzj.cxyzjback.Controller.User.front;
 
-import com.cxyzj.cxyzjback.Service.Interface.Other.ITestService;
-import com.cxyzj.cxyzjback.Service.Interface.User.AuthService;
+import com.cxyzj.cxyzjback.Service.Interface.User.front.AuthService;
 import com.cxyzj.cxyzjback.Utils.Response;
 import com.cxyzj.cxyzjback.Utils.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * @Package com.cxyzj.cxyzjback.Controller
