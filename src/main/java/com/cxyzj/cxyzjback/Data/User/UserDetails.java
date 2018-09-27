@@ -30,6 +30,8 @@ public class UserDetails extends UserData {
     private int articles;
     private int discussions;
     private int comments;
+    private int status_id;
+
 
     public UserDetails(User user) {
         Utils utils = new Utils();
@@ -49,6 +51,8 @@ public class UserDetails extends UserData {
         this.articles = user.getArticles();
         this.discussions = user.getDiscussions();
         this.comments = user.getComments();
+        this.status_id = user.getStatusId();
+
     }
 
 

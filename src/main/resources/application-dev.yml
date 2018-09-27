@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/cxyzj?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8
     username: root
-    password: 980506
+    password: 15250823423wyX
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -34,4 +34,4 @@ logging:
     com.dy.springboot.server.mapper: debug
     com.spring.jiminshiro.mapper: debug
 server:
-  port: 9527
+  port: 8080

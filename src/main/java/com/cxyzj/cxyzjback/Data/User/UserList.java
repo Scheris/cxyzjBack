@@ -20,6 +20,7 @@ public class UserList extends UserData {
     private int articles;
     private int discussions;
     private int comments;
+    private int status_id;
     private boolean is_followed;
 
 
@@ -39,6 +40,8 @@ public class UserList extends UserData {
         this.discussions = user.getDiscussions();
         this.comments = user.getComments();
         this.is_followed = false;
+        this.status_id = user.getStatusId();
+
 
     }
 

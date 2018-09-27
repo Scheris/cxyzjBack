@@ -24,6 +24,7 @@ public class OtherDetails extends UserData {
     private int articles;
     private int discussions;
     private int comments;
+    private int status_id;
     private boolean is_followed;
 
     public OtherDetails(User user) {
@@ -45,6 +46,7 @@ public class OtherDetails extends UserData {
         this.is_followed = is_followed;
         this.bg_url = user.getBgUrl();
         this.theme_color = user.getThemeColor();
+        this.status_id = user.getStatusId();
     }
 
 }

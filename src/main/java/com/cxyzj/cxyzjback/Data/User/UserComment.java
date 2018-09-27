@@ -22,6 +22,8 @@ public class UserComment extends UserData{
     private boolean is_followed;
     private int attention;
     private int fans;
+    private int status_id;
+
 
     public UserComment(User user){
         this.user_id = user.getUserId();
@@ -33,6 +35,8 @@ public class UserComment extends UserData{
         this.is_followed = false;
         this.attention = user.getAttentions();
         this.fans = user.getFans();
+        this.status_id = user.getStatusId();
+
     }
 
 }

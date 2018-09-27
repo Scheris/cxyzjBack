@@ -23,6 +23,8 @@ public class UserBasic extends UserData {
     private int discussions;
     private int comments;
     private int fans;
+    private int status_id;
+
 
     public UserBasic(User user) {
         this.user_id = user.getUserId();
@@ -36,5 +38,7 @@ public class UserBasic extends UserData {
         this.gender = user.getGender();
         this.fans = user.getFans();
         this.introduce = user.getIntroduce();
+        this.status_id = user.getStatusId();
+
     }
 }

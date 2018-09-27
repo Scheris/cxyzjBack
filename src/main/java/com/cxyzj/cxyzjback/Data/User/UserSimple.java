@@ -22,6 +22,8 @@ public class UserSimple extends UserData {
     private int articles;
     private int discussions;
     private int comments;
+    private int status_id;
+
 
     public UserSimple(User user){
         this.user_id = user.getUserId();
@@ -35,6 +37,8 @@ public class UserSimple extends UserData {
         this.articles = user.getArticles();
         this.discussions = user.getDiscussions();
         this.comments = user.getComments();
+        this.status_id = user.getStatusId();
+
     }
 
 }
