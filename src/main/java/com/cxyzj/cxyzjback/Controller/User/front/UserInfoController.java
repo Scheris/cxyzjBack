@@ -1,6 +1,7 @@
 package com.cxyzj.cxyzjback.Controller.User.front;
 
 
+
 import com.cxyzj.cxyzjback.Service.Interface.User.front.UserInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,91 +41,95 @@ public class UserInfoController {
 
     @PostMapping(value = "/update_nickname")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String updateNickname(@RequestParam String nickname){
+    public String updateNickname(@RequestParam String nickname) {
         return userInfoService.updateNickname(nickname);
     }
 
     @PostMapping(value = "/update_head")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String updateHead(@RequestParam String head_url){
+    public String updateHead(@RequestParam String head_url) {
         return userInfoService.updateHead(head_url);
     }
 
     @PostMapping(value = "/update_gender")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String updateGender(@RequestParam String gender){
+    public String updateGender(@RequestParam String gender) {
         return userInfoService.updateGender(gender);
     }
 
     @PostMapping(value = "/update_introduce")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String updateIntroduce(@RequestParam String introduce){
+    public String updateIntroduce(@RequestParam String introduce) {
         return userInfoService.updateIntroduce(introduce);
     }
 
     @PostMapping(value = "/update_theme_color")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String updateThemeColor(@RequestParam String theme_color){
+    public String updateThemeColor(@RequestParam String theme_color) {
         return userInfoService.updateThemeColor(theme_color);
     }
 
     @PostMapping(value = "/update_bg")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String updateBg(@RequestParam String bg_url){
+    public String updateBg(@RequestParam String bg_url) {
         return userInfoService.updateBg(bg_url);
     }
 
-    @PostMapping(value = "/send_code")
+    @GetMapping(value = "/verify_user/send_code")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String sendCode(@RequestParam String verify_type) {
         return userInfoService.sendCode(verify_type);
     }
 
-    @PostMapping(value = "/verify")
+    @GetMapping(value = "/verify_user")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String verify(@RequestParam String code) {
+    public String verifyUser(@RequestParam String code) {
         return userInfoService.verify(code);
     }
 
     @PostMapping(value = "/update_password")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#user_id)")
-    public String updatePassword(@RequestParam String password, @RequestParam String user_id){
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String updatePassword(@RequestParam String password, @RequestParam String user_id) {
         return userInfoService.updatePassword(password, user_id);
     }
 
     @PostMapping(value = "/update_phone")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#user_id)")
-    public String updatePhone(@RequestParam String phone, @RequestParam String user_id){
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String updatePhone(@RequestParam String phone, @RequestParam String user_id) {
         return userInfoService.updatePhone(phone, user_id);
     }
 
     @PostMapping(value = "/update_email")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#user_id)")
-    public String updateEmail(@RequestParam String email, @RequestParam String user_id){
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String updateEmail(@RequestParam String email, @RequestParam String user_id) {
         return userInfoService.updateEmail(email, user_id);
     }
 
     @GetMapping(value = "/refresh_token")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String refreshToken(){
-        return userInfoService.refreshToken();
+    public String refreshToken() {
+        String res = userInfoService.refreshToken();
+        log.info("refreshToken-------------" + res);
+        return res;
     }
 
+
     @GetMapping(value = "/simple/other/{userId}")
-    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#userId)")
     public String getOtherSimple(@PathVariable(name = "userId") String userId) {
         return userInfoService.simpleOther(userId);
     }
 
     @PutMapping(value = "/follow/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String follow(@PathVariable(name = "userId") String targetId){
+    public String follow(@PathVariable(name = "userId") String targetId) {
         return userInfoService.follow(targetId);
     }
 
     @DeleteMapping(value = "/follow/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String delFollow(@PathVariable(name = "userId") String targetId) {
+
         return userInfoService.delFollow(targetId);
     }
 

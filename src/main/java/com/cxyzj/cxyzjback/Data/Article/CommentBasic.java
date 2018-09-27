@@ -10,7 +10,7 @@ import lombok.Data;
  */
 
 @Data
-public class CommentBasic {
+public class CommentBasic implements com.cxyzj.cxyzjback.Data.Data {
 
     private String comment_id;
     private String text;
@@ -35,4 +35,8 @@ public class CommentBasic {
     }
 
 
+    @Override
+    public String getName() {
+        return "comment";
+    }
 }

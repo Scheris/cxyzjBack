@@ -4,13 +4,14 @@ import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Catch.RoleList;
 import lombok.Data;
 
+
 /**
  * @Auther: 夏
  * @DATE: 2018/9/6 17:03
  * @Description:
  */
 @Data
-public class UserComment {
+public class UserComment extends UserData{
 
     private String user_id;
     private String nickname;

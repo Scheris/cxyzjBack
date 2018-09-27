@@ -10,7 +10,7 @@ import lombok.Data;
  */
 
 @Data
-public class ArticleTypeBasic {
+public class ArticleTypeBasic implements com.cxyzj.cxyzjback.Data.Data {
 
     private String type_id;
 
@@ -21,4 +21,8 @@ public class ArticleTypeBasic {
         this.type_name = articleType.getTypeName();
     }
 
+    @Override
+    public String getName() {
+        return "type";
+    }
 }

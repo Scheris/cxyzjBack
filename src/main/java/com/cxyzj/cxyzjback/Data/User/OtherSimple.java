@@ -10,7 +10,7 @@ import lombok.Data;
  */
 
 @Data
-public class OtherSimple {
+public class OtherSimple extends UserData {
 
     private String user_id;
     private String nickname;
@@ -22,7 +22,7 @@ public class OtherSimple {
     private int fans;
     private boolean is_followed;
 
-    public OtherSimple(User user){
+    public OtherSimple(User user) {
 
         this.user_id = user.getUserId();
         this.nickname = user.getNickname();

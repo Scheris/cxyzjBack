@@ -10,7 +10,7 @@ import lombok.Data;
  */
 
 @Data
-public class ArticleBasic {
+public class ArticleBasic implements com.cxyzj.cxyzjback.Data.Data {
 
     private String article_id;
     private String title;
@@ -44,4 +44,8 @@ public class ArticleBasic {
         this.is_author = false;
     }
 
+    @Override
+    public String getName() {
+        return "article";
+    }
 }

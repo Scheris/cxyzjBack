@@ -9,7 +9,7 @@ import lombok.Data;
  * @Description:
  */
 @Data
-public class ReplyBasic {
+public class ReplyBasic implements com.cxyzj.cxyzjback.Data.Data {
 
     private String commentId;
     private String replyId;
@@ -33,4 +33,8 @@ public class ReplyBasic {
         this.allow_delete = true;
     }
 
+    @Override
+    public String getName() {
+        return "reply";
+    }
 }

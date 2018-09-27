@@ -110,7 +110,7 @@ public class CommentServiceImpl implements CommentService {
         pb.setPageNum(pageNum);
 
         List<Reply> replies = new ArrayList<>();
-        List<CommentBasic>[] replyLists = new List[0];
+        List[] replyLists = new List[0];
 
         Reply[] reply1 = new Reply[0];
         for(int i = 0; i<comments.length; i++){
@@ -134,14 +134,14 @@ public class CommentServiceImpl implements CommentService {
             }
         }
 
-        for(int j = 0; j<reply1.length; j++) {
-            replies.add(reply1[j]);
-            UserComment userReply = new UserComment(userJpaRepository.findByUserId(reply1[j].getReplier()));
+        for (Reply aReply1 : reply1) {
+            replies.add(aReply1);
+            UserComment userReply = new UserComment(userJpaRepository.findByUserId(aReply1.getReplier()));
             userReplies.add(userReply);
             replyLists = new List[]{replies, userReplies};
         }
 
-        List<CommentBasic>[] list = new List[]{commentLists,userComments, Arrays.asList(replyLists)};
+        List[] list = new List[]{commentLists,userComments, Arrays.asList(replyLists)};
         response.insert(list);
         return response.sendSuccess();
     }
@@ -346,7 +346,6 @@ public class CommentServiceImpl implements CommentService {
                 int object = replyJpaRepository.findObjectByReplyId(replyId) - 1;
                 replyJpaRepository.updateReplyObject(object, replyId);
                 response.insert("object", object);
-                response.insert("插入测试");
                 return response.sendSuccess();
             }else {
                 return this.object(commentId, replyId);

@@ -9,13 +9,15 @@ import lombok.Data;
  * @Date 13:23 2018/8/28
  */
 @Data
-public class OtherDetails {
+public class OtherDetails extends UserData {
 
     private String user_id;
     private String nickname;
     private String head_url;
     private String role;
     private String introduce;
+    private String bg_url;
+    private String theme_color;
     private int gender;
     private int attentions;
     private int fans;
@@ -24,9 +26,11 @@ public class OtherDetails {
     private int comments;
     private boolean is_followed;
 
+    public OtherDetails(User user) {
+        this(user, false);
+    }
 
-    public OtherDetails(User user){
-
+    public OtherDetails(User user, boolean is_followed) {
         this.user_id = user.getUserId();
         this.nickname = user.getNickname();
         this.head_url = user.getHeadUrl();
@@ -38,8 +42,9 @@ public class OtherDetails {
         this.articles = user.getArticles();
         this.discussions = user.getDiscussions();
         this.comments = user.getComments();
-        this.is_followed = false;
-
+        this.is_followed = is_followed;
+        this.bg_url = user.getBgUrl();
+        this.theme_color = user.getThemeColor();
     }
 
 }

@@ -16,7 +16,7 @@ public final class Status {
     public static final int ILLEGAL_TOKEN = 103;//非法的token
     public static final int ACCESS_DENIED = 104;//访问拒绝
     //user操作码111~130
-    public static final int INVALID_USER = 111;//非法的用户
+    public static final int ILLEGAL_USER = 111;//非法的用户
     public static final int NONE_USER = 112;//没有该用户
     public static final int CODE_ERROR = 113;//验证码错误
     public static final int PHONE_HAS_REGISTER = 114;//该手机号已被注册
@@ -27,7 +27,7 @@ public final class Status {
     public static final int OUT_OF_TIME = 119;//验证过期
     public static final int USER_HAS_FOLLOWED = 120;  //用户已关注
     public static final int USER_NOT_FOLLOWED = 121;//该用户未关注
-
+    public static final int INSUFFICIENT_USER_PERMISSIONS = 122;//用户权限不足
     public static final int COMMENT_HAS_DELETE=124;//评论已删除
     public static final int USER_HAS_SUPPORT_OR_OBJECT = 125;//已支持或者已反对
     public static final int FILE_UPLOAD_FAILURE=127;//文件上传失败
@@ -42,6 +42,7 @@ public final class Status {
 
     //其它操作码330~399
     public static final int NO_SUCH_FIELD = 331;
+    public static final int ILLEGAL_ARGUMENT = 332;//非法的参数
 
     public static final int REDIS_NOT_START = 404;
 

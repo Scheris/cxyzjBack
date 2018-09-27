@@ -9,7 +9,7 @@ import lombok.Data;
  * @Date 09:38 2018/8/21
  */
 @Data
-public class UserSimple {
+public class UserSimple extends UserData {
 
     private String user_id;
     private String nickname;

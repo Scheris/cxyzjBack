@@ -1,5 +1,6 @@
 package com.cxyzj.cxyzjback.Controller.User.front;
 
+
 import com.cxyzj.cxyzjback.Service.Interface.User.front.AuthService;
 import com.cxyzj.cxyzjback.Utils.Response;
 import com.cxyzj.cxyzjback.Utils.Status;
@@ -21,9 +22,10 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+
     @PostMapping(value = "/login_password")
     public String login(@RequestParam(required = false) String email, @RequestParam String password, @RequestParam(required = false) String phone) {
-        log.info("");
+        log.info("login");
         try {
             return authService.login(email, phone, password);
         } catch (NoSuchFieldException e) {
@@ -31,61 +33,66 @@ public class AuthController {
         }
     }
 
-    @PostMapping(value = "/register")
-    public String register(@RequestParam(required = true) String nickname, @RequestParam(required = true) String email,
-                                        @RequestParam(required = true) String password, @RequestParam(required = true) int gender,
-                                        @RequestParam(required = true) String phone, @RequestParam(required = true) String headUrl) {
 
-        try {
-            return authService.register(nickname, email, password, gender, phone, headUrl);
-        } catch (NoSuchFieldException e) {
-            return new Response().sendFailure(Status.NO_SUCH_FIELD, "用户已存在！");
-        }
+    @PostMapping(value = "/register")
+    public String register(String nickname, String email, String password, int gender, String phone, String head_url) {
+        return authService.register(nickname, email, password, gender, phone, head_url);
+
     }
 
     //验证码发送
     @PostMapping(value = "/send_code")
-    public String sendCode(@RequestParam(required = false) String email ,@RequestParam(required = false) String phone){
+    public String sendCode(@RequestParam(required = false) String email, @RequestParam(required = false) String phone) {
         try {
             return authService.sendCode(email, phone);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new Response().sendFailure(Status.NO_SUCH_FIELD,"邮箱和手机不能同时为空！");
+        return new Response().sendFailure(Status.NO_SUCH_FIELD, "邮箱和手机不能同时为空！");
+    }
+
+    @GetMapping(value = "/exist")
+    public String existUser(@RequestParam(required = false) String email, @RequestParam(required = false) String phone, @RequestParam(required = false) String nickname) {
+        try {
+            return authService.existUser(email, phone, nickname);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return new Response().sendFailure(Status.NO_SUCH_FIELD, "邮箱，手机和昵称不能同时为空！");
     }
 
     //验证码校验
-    @PostMapping(value ="/verify_code")
+    @PostMapping(value = "/verify_code")
     public String verifyCode(@RequestParam(required = false) String phone, @RequestParam(required = false) String email,
-                             @RequestParam String code){
+                             @RequestParam String code) {
         try {
             return authService.verifyCode(phone, email, code);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-        return new Response().sendFailure(Status.NO_SUCH_FIELD,"邮箱和手机不能同时为空！");
+        return new Response().sendFailure(Status.NO_SUCH_FIELD, "邮箱和手机不能同时为空！");
 
     }
 
     //验证码登陆
     @PostMapping(value = "/login_code")
-    public String loginCode(@RequestParam String phone, @RequestParam String code){
+    public String loginCode(@RequestParam String phone, @RequestParam String code) {
         try {
             return authService.loginCode(phone, code);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-        return new Response().sendFailure(Status.NO_SUCH_FIELD,"手机不能为空！");
+        return new Response().sendFailure(Status.NO_SUCH_FIELD, "手机不能为空！");
     }
 
     //忘记密码，重新设置
     @PostMapping(value = "/forget_password")
     public String forgetPassword(@RequestParam(required = false) String email, @RequestParam(required = false) String phone,
-                                 @RequestParam String password, @RequestParam String code){
+                                 @RequestParam String password, @RequestParam String code) {
         try {
             return authService.forgetPassword(email, phone, password, code);
         } catch (NoSuchFieldException e) {
-            return new Response().sendFailure(Status.NO_SUCH_FIELD,"邮箱和手机不能同时为空！");
+            return new Response().sendFailure(Status.NO_SUCH_FIELD, "邮箱和手机不能同时为空！");
         }
     }
 

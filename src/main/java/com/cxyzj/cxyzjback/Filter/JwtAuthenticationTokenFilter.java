@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.annotation.Resource;
@@ -35,7 +36,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             JWTUtils jwtUtils = new JWTUtils();
             jwtUtils.ParseToken(request);//解析请求中的token信息
             String userId = jwtUtils.getUserId();//获取解析后的用户id
+            String user_role = jwtUtils.getRole();//获取解析后的用户id
             log.info("userId:" + userId);
+            log.info("user_role:" + user_role);
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {//如果id不为空，且SecurityContextHolder里没有相关信息
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userId);//通过ID加载用户信息
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
@@ -56,11 +59,13 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     }
 
     private void sendFailureMessage(int code, String msg, HttpServletResponse response) throws IOException {
+        log.info("-------****----------****-------Token被拒原因" + msg);
         Response myResponse = new Response();
-        response.setContentType("application/json");
-        response.setHeader("Content-type", "text/html;charset=UTF-8");
+        response.setHeader("Content-type", "application/json;charset=UTF-8");
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
         response.setStatus(HttpServletResponse.SC_OK);
         PrintWriter printWriter = response.getWriter();
+        log.info(response.getHeader("Access-Control-Allow-Origin"));
         printWriter.println(myResponse.sendFailure(code, msg));
     }
 }

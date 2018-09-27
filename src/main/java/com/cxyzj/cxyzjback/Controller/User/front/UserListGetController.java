@@ -20,16 +20,17 @@ public class UserListGetController {
     @Autowired
     UserListGetService userListGetService;
 
-    @GetMapping(value = "/attention_list/{page_num}")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String getAttentionList(@PathVariable(name = "page_num") int pageNum){
-        return userListGetService.getAttentionList(pageNum);
+    @GetMapping(value = "{userId}/attention_list/{page_num}")
+    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String getAttentionList(@PathVariable(name = "userId") String userId, @PathVariable(name = "page_num") int pageNum) {
+        return userListGetService.getAttentionList(userId, pageNum);
     }
 
-    @GetMapping(value = "/fans_list/{page_num}")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String getFansList(@PathVariable(name = "page_num") int pageNum){
-        return userListGetService.getFansList(pageNum);
+    @GetMapping(value = "{userId}/fans_list/{page_num}")
+    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String getFansList(@PathVariable(name = "userId") String userId, @PathVariable(name = "page_num") int pageNum) {
+        return userListGetService.getFansList(userId, pageNum);
     }
+
 
 }

@@ -1,19 +1,24 @@
 package com.cxyzj.cxyzjback.Service.impl.User.front;
 
-import com.cxyzj.cxyzjback.Bean.PageBean;
+
 import com.cxyzj.cxyzjback.Bean.User.Attention;
 import com.cxyzj.cxyzjback.Bean.User.User;
-import com.cxyzj.cxyzjback.Data.PageUtil;
-import com.cxyzj.cxyzjback.Data.User.UserList;
+import com.cxyzj.cxyzjback.Data.Other.PageData;
+import com.cxyzj.cxyzjback.Data.User.OtherDetails;
 import com.cxyzj.cxyzjback.Repository.User.UserAttentionJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.User.front.UserListGetService;
+import com.cxyzj.cxyzjback.Utils.Constant;
 import com.cxyzj.cxyzjback.Utils.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -30,70 +35,56 @@ public class UserListGetServiceImpl implements UserListGetService {
     @Autowired
     private UserAttentionJpaRepository userAttentionJpaRepository;
     private Response response;
-    private String userId;
-    private User user;
 
     @Override
-    public String getAttentionList(int pageNum) {
+    public String getAttentionList(String userId, int pageNum) {
         response = new Response();
-        userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Attention> allAttention = userAttentionJpaRepository.findByUserId(userId);
-
-        int totalRecord = allAttention.size();
-        PageBean pb = new PageBean();
-        pb.PageBean(pageNum, 9, totalRecord);
-
-        int startIndex = pb.getStartIndex();
-        Attention attention[] = userAttentionJpaRepository.findAttention(startIndex, 9, userId);
-
-        pb.setList(userAttentionJpaRepository.findAll(startIndex, 9));
-        pb.setPageNum(pageNum);
-
-        List<UserList> userLists = new ArrayList<UserList>();
-        for(int i = 0; i<attention.length; i++){
-            user = userJpaRepository.findByUserId(attention[i].getTargetUser());
-            UserList userList = new UserList(user);
-            userList.set_followed(true);
-            userLists.add(userList);
-        }
-
-        response.insert("attentions", userLists);
-        response.insert("page", new PageUtil(pb));
+        Page<Attention> attentionPage = pageSelect(pageNum, Constant.FOCUS, userId);
+        PageData pageData = new PageData(attentionPage, pageNum);
+        ArrayList<OtherDetails> otherDetailsArrayList = getAttentionsOrFans(attentionPage.iterator(), true);
+        response.insert(pageData);
+        response.insert("attentions", otherDetailsArrayList);
         return response.sendSuccess();
     }
 
     @Override
-    public String getFansList(int pageNum) {
-
+    public String getFansList(String userId, int pageNum) {
         response = new Response();
-        userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Attention> allAttention = userAttentionJpaRepository.findByUserId(userId);
-        int totalRecord = allAttention.size();
-
-        PageBean pb = new PageBean();
-        pb.PageBean(pageNum, 9, totalRecord);
-
-        int startIndex = pb.getStartIndex();
-        Attention attention[] = userAttentionJpaRepository.findFans(startIndex, 9, userId);
-
-        pb.setList(userAttentionJpaRepository.findAll(startIndex, 9));
-        pb.setPageNum(pageNum);
-
-        List<UserList> userLists = new ArrayList<UserList>();
-        for(int i = 0; i<attention.length; i++){
-            int status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, attention[i].getUserId());
-            UserList userList = new UserList(userJpaRepository.findByUserId(attention[i].getUserId()));
-            if(status != 203){
-                userList.set_followed(false);
-            }else {
-                userList.set_followed(true);
-            }
-            userLists.add(userList);
-        }
-
-        response.insert("attentions", userLists);
-        response.insert("page", new PageUtil(pb));
+        Page<Attention> attentionPage = pageSelect(pageNum, Constant.FOLLOWED, userId);
+        PageData pageData = new PageData(attentionPage, pageNum);
+        ArrayList<OtherDetails> otherDetailsArrayList = getAttentionsOrFans(attentionPage.iterator(), false);
+        response.insert(pageData);
+        response.insert("fans", otherDetailsArrayList);
         return response.sendSuccess();
+    }
 
+    /**
+     * @param pageNum 指定的页数
+     * @param status  指定状态
+     * @param userId  指定要查询的用户id
+     * @return 分页查询结果
+     */
+    private Page<Attention> pageSelect(int pageNum, int status, String userId) {
+        Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "userId");
+        Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_ATTENTION_USER, sort);
+        return userAttentionJpaRepository.findAllByUserIdAndStatus(pageable, userId, status);
+    }
+
+    /**
+     * @param attentionIterator 要处理的用户的迭代器
+     * @param isAttention       是否是关注
+     * @return 处理后的用户信息
+     */
+    private ArrayList<OtherDetails> getAttentionsOrFans(Iterator<Attention> attentionIterator, boolean isAttention) {
+        ArrayList<String> userIdList = new ArrayList<>();
+        while (attentionIterator.hasNext()) {
+            userIdList.add(attentionIterator.next().getTargetUser());
+        }
+        List<User> users = userJpaRepository.findByUserId(userIdList);
+        ArrayList<OtherDetails> otherDetailsArrayList = new ArrayList<>();
+        for (User user : users) {
+            otherDetailsArrayList.add(new OtherDetails(user, isAttention));
+        }
+        return otherDetailsArrayList;
     }
 }

@@ -7,7 +7,6 @@ import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Data.Article.ArticleBasic;
 import com.cxyzj.cxyzjback.Data.Article.ArticleTypeBasic;
 import com.cxyzj.cxyzjback.Data.User.UserBasic;
-import com.cxyzj.cxyzjback.Data.User.UserComment;
 import com.cxyzj.cxyzjback.Repository.Article.*;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.Article.ArticleService;
@@ -54,9 +53,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public String writeArticle(String title, String text, String type_id, String article_sum,
                                String thumbnail, int status_id, String user_id) {
-
-        long updateTime = System.currentTimeMillis();
-
         response = new Response();
         article = new Article();
         article.setTitle(title);
@@ -66,11 +62,11 @@ public class ArticleServiceImpl implements ArticleService {
         article.setThumbnail(thumbnail);
         article.setStatus_id(status_id);
         article.setUserId(user_id);
-        article.setUpdateTime(updateTime);
+        article.setUpdateTime(System.currentTimeMillis());
 
-        articleJpaRepository.save(article);
+        article = articleJpaRepository.save(article);
 
-        response.insert("article_id", articleJpaRepository.findByUpdateTime(updateTime).getArticleId());
+        response.insert("article_id", article.getArticleId());
         return response.sendSuccess();
     }
 
@@ -79,7 +75,7 @@ public class ArticleServiceImpl implements ArticleService {
         response = new Response();
         ArticleType[] articleTypes = articleTypeJpaRepository.findAll().toArray(new ArticleType[0]);
         List<ArticleTypeBasic> articleTypeList = new ArrayList<>();
-        for (int i = 0;i<articleTypes.length;i++){
+        for (int i = 0; i < articleTypes.length; i++) {
             ArticleTypeBasic articleTypeBasic = new ArticleTypeBasic(articleTypes[i]);
             articleTypeList.add(articleTypeBasic);
         }
@@ -97,16 +93,16 @@ public class ArticleServiceImpl implements ArticleService {
         User user = userJpaRepository.findByUserId(article.getUserId());
         ArticleType articleType = articleTypeJpaRepository.findByTypeId(article.getTypeId());
 
-        if(userId.equals(article.getUserId())){
+        if (userId.equals(article.getUserId())) {
             articleBasic.set_author(true);
             articleBasic.setAllow_delete(true);
             articleBasic.setAllow_edit(true);
             articleBasic.set_collected(false);
             response.insert("article", articleBasic);
 
-        }else {
+        } else {
             //如果已收藏该文章
-            if(articleCollectionJpaRepository.existsByArticleIdAndUserId(articleId, userId)){
+            if (articleCollectionJpaRepository.existsByArticleIdAndUserId(articleId, userId)) {
                 articleBasic.set_collected(true);
                 response.insert("article", articleBasic);
             }
@@ -121,7 +117,7 @@ public class ArticleServiceImpl implements ArticleService {
     public String collect(String articleId) {
         response = new Response();
         userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(!articleCollectionJpaRepository.existsByArticleIdAndUserId(articleId, userId)) {
+        if (!articleCollectionJpaRepository.existsByArticleIdAndUserId(articleId, userId)) {
             ArticleCollection articleCollection = new ArticleCollection();
             articleCollection.setArticleId(articleId);
             articleCollection.setUserId(userId);
@@ -129,7 +125,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleCollectionJpaRepository.save(articleCollection);
             int collections = articleJpaRepository.findCollectionsByArticleId(articleId) + 1;
             articleJpaRepository.updateCollectionsByArticleId(collections, articleId);
-        }else {
+        } else {
             this.collectDel(articleId);
         }
 
@@ -140,12 +136,12 @@ public class ArticleServiceImpl implements ArticleService {
     public String collectDel(String articleId) {
         response = new Response();
         userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(articleCollectionJpaRepository.existsByArticleIdAndUserId(articleId, userId)) {
+        if (articleCollectionJpaRepository.existsByArticleIdAndUserId(articleId, userId)) {
             articleCollectionJpaRepository.deleteByArticleIdAndUserId(articleId, userId);
 
             int collections = articleJpaRepository.findCollectionsByArticleId(articleId) - 1;
             articleJpaRepository.updateCollectionsByArticleId(collections, articleId);
-        }else {
+        } else {
             this.collect(articleId);
         }
 
@@ -157,7 +153,7 @@ public class ArticleServiceImpl implements ArticleService {
     public String articleDel(String articleId, String userId) {
         response = new Response();
 
-        if(articleJpaRepository.existsByArticleId(articleId)){
+        if (articleJpaRepository.existsByArticleId(articleId)) {
             replyJpaRepository.deleteByTargetId(articleId);
             commentJpaRepository.deleteByTargetId(articleId);
             articleCollectionJpaRepository.deleteByArticleId(articleId);
@@ -166,7 +162,7 @@ public class ArticleServiceImpl implements ArticleService {
 
             return response.sendSuccess();
 
-        }else {
+        } else {
             return response.sendFailure(128, "文章已删除或者您没有权限！");
         }
     }

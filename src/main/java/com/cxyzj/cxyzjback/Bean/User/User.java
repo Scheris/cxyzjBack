@@ -1,5 +1,6 @@
 package com.cxyzj.cxyzjback.Bean.User;
 
+import com.cxyzj.cxyzjback.Utils.Constant;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -32,7 +33,7 @@ public class User {
     @Column(name = "head_url")
     private String headUrl;
     @Column(name = "bg_url")
-    private String bgUrl = "C:/Users/Administrator/Desktop/bgUrl";
+    private String bgUrl = "/img/user/background.jpeg";
     @Column(name = "introduce")
     private String introduce = "这个人很懒，连介绍都没有(￢︿̫̿￢☆)";
     @Column(name = "regist_date")
@@ -42,7 +43,7 @@ public class User {
     @Column(name = "phone")
     private String phone;
     @Column(name = "theme_color")
-    private String themeColor = "white";
+    private String themeColor = "rgba(255,255,255,1)";
     @Column(name = "fans")
     private int fans = 0;
     @Column(name = "attentions")
@@ -53,4 +54,8 @@ public class User {
     private int comments = 0;
     @Column(name = "articles")
     private int articles = 0;
+    @Column(name = "login_date")
+    private long loginDate;
+    @Column(name = "status_id")
+    private int statusId = Constant.NORMAL;
 }

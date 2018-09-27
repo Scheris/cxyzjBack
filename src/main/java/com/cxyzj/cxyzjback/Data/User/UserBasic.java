@@ -11,7 +11,7 @@ import lombok.Data;
  * @Description:
  */
 @Data
-public class UserBasic {
+public class UserBasic extends UserData {
     private String user_id;
     private String nickname;
     private String head_url;

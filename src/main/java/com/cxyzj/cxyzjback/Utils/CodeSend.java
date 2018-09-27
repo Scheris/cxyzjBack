@@ -9,34 +9,31 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.sun.mail.util.MailSSLSocketFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-import java.util.Random;
-
 
 /**
  * 验证码发送类
+ *
  * @author 夏
  */
 
 public class CodeSend {
 
-    @Autowired
-    private Response response;
-
-
     /**
      * 手机验证码发送
+     *
      * @param phone
      * @param code
      * @return sendSuccess||sendFailure
      */
-    public String phoneSend(String phone, String code) throws Exception {
-        response = new Response();
+    public boolean phoneSend(String phone, String code) throws ClientException {
         System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");
         final String product = "Dysmsapi";
@@ -57,67 +54,27 @@ public class CodeSend {
 
         SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
 
-        if(sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {
+        if (sendSmsResponse.getCode() != null && sendSmsResponse.getCode().equals("OK")) {
             //请求成功
-            System.out.println("验证码：---------------------------------------------"+code);
-            return response.sendSuccess();
-        }else {
-            return response.sendFailure(Status.CODE_SEND_FAILURE,"验证码发送失败！");
+            System.out.println("验证码：---------------------------------------------" + code);
+            return true;
+        } else {
+            return false;
         }
-
-
-    }
-
-    /**
-     * 邮箱验证码发送  (qq邮箱会拦截)
-     * @param email
-     * @param code
-     * @return sendSuccess||sendFailure
-     */
-    public String mail2Send(String email, String code){
-
-        response = new Response();
-        try{
-            Properties prop = new Properties();
-            prop.setProperty("mail.transport.protocol", "smtp");//协议
-            prop.setProperty("mail.smtp.host", "smtp.sina.cn");//主机名
-            prop.setProperty("mail.smtp.auth", "true");//是否开启权限控制
-            prop.setProperty("mail.debug", "true");//如果设置为true,则在发送邮件时会打印发送时的信息
-            //--获取从程序到邮件服务器的一次会话
-            Session session = Session.getInstance(prop);
-            Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress("kitor_summer@sina.com"));
-            msg.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(email));
-            msg.setSubject("来自CXYZJ的邮件");
-            msg.setText("您的验证码是：" + code+"；");
-
-            Transport trans = session.getTransport();
-            trans.connect("kitor_summer@sina.com", "19980506xqt");
-            trans.sendMessage(msg, msg.getAllRecipients());
-
-            System.out.println("验证码是————————————————————————————————————————————————" + code);
-            return new Response().sendSuccess();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return response.sendFailure(Status.CODE_SEND_FAILURE, "验证码发送失败");
-        }
-
     }
 
     /**
      * 邮箱验证码发送  (支持qq邮箱)
+     *
      * @param email
      * @param code
      * @return sendSuccess||sendFailure
      */
-    public String mailSend(String email, String code){
-
-        response = new Response();
-        try{
+    public boolean mailSend(String email, String code,String text) {
+        try {
             Properties prop = new Properties();
             prop.setProperty("mail.transport.protocol", "smtp");
-            prop.setProperty("mail.smtp.host", "smtp.qq.com");
+            prop.setProperty("mail.smtp.host", "smtp.sina.cn");
             prop.setProperty("mail.smtp.auth", "true");
             prop.setProperty("mail.debug", "true");
 
@@ -127,22 +84,29 @@ public class CodeSend {
             prop.put("mail.smtp.ssl.socketFactory", sf);
 
             Session session = Session.getInstance(prop);
-            Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress("kitor_summer@qq.com"));
+            MimeMessage msg = new MimeMessage(session);
+            String from = "cxyzj203@qq.com";
+            String nick = "";
+            try {
+                nick = javax.mail.internet.MimeUtility.encodeText("CXYZJ");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            msg.setFrom(new InternetAddress(nick + " <" + from + ">"));
             msg.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(email));
-            msg.setSubject("来自CXYZJ的邮件");
-            msg.setText("您的验证码是：" + code+"；");
-
+            msg.setSubject("来自程序员之家的邮件");
+            msg.setText(text + code );
             Transport trans = session.getTransport();
-            trans.connect("smtp.qq.com","kitor_summer@qq.com", "datcwecvzkiygfbi");
+            trans.connect("smtp.qq.com", from, "ylxcfkgmbwrxdajf");
             trans.sendMessage(msg, msg.getAllRecipients());
 
             System.out.println("验证码是————————————————————————————————————————————————" + code);
-            return new Response().sendSuccess();
+            return true;
 
         } catch (Exception e) {
+
             e.printStackTrace();
-            return response.sendFailure(Status.CODE_SEND_FAILURE, "验证码发送失败");
+            return false;
         }
 
     }

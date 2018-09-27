@@ -5,7 +5,7 @@ import com.cxyzj.cxyzjback.Catch.RoleList;
 import lombok.Data;
 
 @Data
-public class UserList {
+public class UserList extends UserData {
 
     private String user_id;
     private String nickname;
@@ -23,7 +23,7 @@ public class UserList {
     private boolean is_followed;
 
 
-    public UserList(User user){
+    public UserList(User user) {
 
         this.user_id = user.getUserId();
         this.nickname = user.getNickname();
