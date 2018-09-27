@@ -57,5 +57,5 @@ public class User {
     @Column(name = "login_date")
     private long loginDate;
     @Column(name = "status_id")
-    private int statusId = Constant.NORMAL;
+    private int statusId = Constant.NORMAL;//默认为正常状态
 }

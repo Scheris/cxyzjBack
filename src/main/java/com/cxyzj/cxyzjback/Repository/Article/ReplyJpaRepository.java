@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
  * @DATE: 2018/9/6 15:15
  * @Description:
  */
-public interface ReplyJpaRepository extends JpaRepository<Reply, Integer> {
+public interface ReplyJpaRepository extends JpaRepository<Reply, String> {
 
     Reply[] findByUserIdAndTargetId(String userId, String TargetId);
 
@@ -21,26 +22,21 @@ public interface ReplyJpaRepository extends JpaRepository<Reply, Integer> {
 
     boolean existsByReplyId(String replyId);
 
-    @Transactional
-    @Query(value = "select * from reply where comment_id=?1", nativeQuery = true)
-    Reply[] findByCommentId(String commentId);
 
     boolean existsByCommentId(String commentId);
 
-    @Transactional
-    @Modifying
-    @Query(value = "delete from reply where comment_id=?1 and target_id=?2", nativeQuery = true)
-    int deleteByCommentIdAndTargetId(String commentId, String targetId);
+    List<Reply> findAllByTargetId(String targetId);
+
 
     @Transactional
     @Modifying
     @Query(value = "delete from reply where target_id=?1", nativeQuery = true)
-    int deleteByTargetId(String targetId);
+    void deleteByTargetId(String targetId);
 
     @Transactional
     @Modifying
     @Query(value = "delete from reply where comment_id=?1", nativeQuery = true)
-    int deleteByCommentId(String commentId);
+    void deleteByCommentId(String commentId);
 
     @Transactional
     @Query(value = "select count(*) from reply where comment_id=?1", nativeQuery = true)
@@ -49,7 +45,7 @@ public interface ReplyJpaRepository extends JpaRepository<Reply, Integer> {
     @Transactional
     @Modifying
     @Query(value = "delete from reply where reply_id=?1", nativeQuery = true)
-    int deleteByReplyId(String replyId);
+    void deleteByReplyId(String replyId);
 
 
     @Transactional
@@ -59,7 +55,7 @@ public interface ReplyJpaRepository extends JpaRepository<Reply, Integer> {
     @Transactional
     @Modifying
     @Query(value = "update reply set support=?1 where reply_id=?2", nativeQuery = true)
-    int updateReplySupport(int support, String replyId);
+    void updateReplySupport(int support, String replyId);
 
     @Transactional
     @Query(value = "select object from reply where reply_id=?1", nativeQuery = true)
@@ -68,5 +64,5 @@ public interface ReplyJpaRepository extends JpaRepository<Reply, Integer> {
     @Transactional
     @Modifying
     @Query(value = "update reply set object=?1 where reply_id=?2", nativeQuery = true)
-    int updateReplyObject(int object, String replyId);
+    void updateReplyObject(int object, String replyId);
 }

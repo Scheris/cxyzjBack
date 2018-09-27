@@ -16,7 +16,7 @@ public interface AuthService {
 
     String verifyCode(String phone, String email, String code) throws NoSuchFieldException;
 
-    String loginCode(String phone, String code) throws NoSuchFieldException;
+    String loginCode(String phone, String code) ;
 
     String forgetPassword(String email, String phone, String password, String code) throws NoSuchFieldException;
 

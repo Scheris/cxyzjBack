@@ -28,11 +28,13 @@ public final class Status {
     public static final int USER_HAS_FOLLOWED = 120;  //用户已关注
     public static final int USER_NOT_FOLLOWED = 121;//该用户未关注
     public static final int INSUFFICIENT_USER_PERMISSIONS = 122;//用户权限不足
-    public static final int COMMENT_HAS_DELETE=124;//评论已删除
+    public static final int COMMENT_HAS_DELETE = 124;//评论已删除
     public static final int USER_HAS_SUPPORT_OR_OBJECT = 125;//已支持或者已反对
-    public static final int FILE_UPLOAD_FAILURE=127;//文件上传失败
+    public static final int FILE_UPLOAD_FAILURE = 127;//文件上传失败
     //article操作码131~160
-
+    public static final int ARTICLE_HAS_COLLECTED = 131;//文章已被收藏
+    public static final int ARTICLE_NOT_COLLECTED = 132;//文章未被收藏
+    public static final int ARTICLE_NOT_EXIST = 133;//文章不存在
 
     //discussion操作码161~190
 

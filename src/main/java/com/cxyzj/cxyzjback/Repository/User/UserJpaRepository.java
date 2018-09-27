@@ -20,6 +20,8 @@ public interface UserJpaRepository extends JpaRepository<User, String> {
 
     boolean existsByEmail(String email);
 
+    boolean existsByEmailOrPhoneOrNickname(String email, String phone, String nickname);
+
     boolean existsByUserId(String UserId);
 
     boolean existsByNickname(String nickname);
@@ -33,15 +35,11 @@ public interface UserJpaRepository extends JpaRepository<User, String> {
 
     User findByPhone(String phone);
 
-    User findByNickname(String nickname);
-
-
-    List<User> findAll();
-
     @Transactional
     @Modifying
     @Query(value = "update user p set p.password=?1 where p.phone=?2", nativeQuery = true)
     void updatePasswordByPhone(String password, String phone);
+
 
     @Transactional
     @Modifying
@@ -98,9 +96,6 @@ public interface UserJpaRepository extends JpaRepository<User, String> {
     @Query(value = "select fans from user where user_id=?1", nativeQuery = true)
     int getUserFans(String userId);
 
-    @Transactional
-    @Query(value = "select * from user where user_id=?1", nativeQuery = true)
-    List<User> findUserByUserId(String userId);
 
     @Transactional
     @Modifying
@@ -120,4 +115,15 @@ public interface UserJpaRepository extends JpaRepository<User, String> {
     @Modifying
     @Query(value = "update user p set p.login_date=?1 where p.user_id=?2", nativeQuery = true)
     void updateLoginDateByUserId(long login_date, String userId);
+
+
+    @Transactional
+    @Modifying
+    @Query(value = "update user u set u.articles=u.articles+1 where u.user_id=?1", nativeQuery = true)
+    void increaseArticlesByUserId(String userId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update user u set u.articles=u.articles-1 where u.user_id=?1", nativeQuery = true)
+    void deleteArticlesByUserId(String userId);
 }

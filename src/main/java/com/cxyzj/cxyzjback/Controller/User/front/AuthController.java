@@ -77,12 +77,7 @@ public class AuthController {
     //验证码登陆
     @PostMapping(value = "/login_code")
     public String loginCode(@RequestParam String phone, @RequestParam String code) {
-        try {
-            return authService.loginCode(phone, code);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        return new Response().sendFailure(Status.NO_SUCH_FIELD, "手机不能为空！");
+        return authService.loginCode(phone, code);
     }
 
     //忘记密码，重新设置

@@ -55,6 +55,12 @@ public class CommentServiceImpl implements CommentService {
     private Response response;
     private String userId;
     private Reply reply;
+
+    /**
+     * @param text       评论
+     * @param article_id 被评论的文章ID
+     * @return 评论信息
+     */
     @Override
     public String comment(String text, String article_id) {
         response = new Response();
@@ -69,7 +75,7 @@ public class CommentServiceImpl implements CommentService {
 
         //获取楼号数组，取得最大值
         int max = (int) Collections.max(commentJpaRepository.getLevel(article_id));
-        comment.setLevel(max+1);
+        comment.setLevel(max + 1);
         commentJpaRepository.save(comment);
         articleJpaRepository.updateCommentsByArticleId(articleJpaRepository.findCommentsByArticleId(article_id) + 1, article_id);
         articleJpaRepository.updateLevelsByArticleId(articleJpaRepository.findLevelsByArticleId(article_id) + 1, article_id);
@@ -98,7 +104,7 @@ public class CommentServiceImpl implements CommentService {
         response = new Response();
         comment = new Comment();
 
-        List<Comment> commentList = commentJpaRepository.findListByTargetId(article_id);
+        List<Comment> commentList = commentJpaRepository.findAllByTargetId(article_id);
 
         int totalRecord = commentList.size();
         PageBean pb = new PageBean();
@@ -113,22 +119,22 @@ public class CommentServiceImpl implements CommentService {
         List[] replyLists = new List[0];
 
         Reply[] reply1 = new Reply[0];
-        for(int i = 0; i<comments.length; i++){
+        for (int i = 0; i < comments.length; i++) {
             comment = commentJpaRepository.findByCommentId(comments[i].getCommentId());
             User user = userJpaRepository.findByUserId(comments[i].getDiscusser());
             reply1 = replyJpaRepository.findByUserIdAndTargetId(comments[i].getDiscusser(), comments[i].getTargetId());
 
-            if(comment != null && reply1 == null){
+            if (comment != null && reply1 == null) {
 
             }
 
             UserComment userComment = new UserComment(user);
             CommentBasic commentBasic = new CommentBasic(comment);
-            if(commentVoteJpaRepository.findByUserIdAndTargetId(userId, comment.getDiscusser()) != null){
+            if (commentVoteJpaRepository.findByUserIdAndTargetId(userId, comment.getDiscusser()) != null) {
                 commentBasic.setAllow_vote(false);
                 userComments.add(userComment);
                 commentLists.add(commentBasic);
-            }else {
+            } else {
                 userComments.add(userComment);
                 commentLists.add(commentBasic);
             }
@@ -141,7 +147,7 @@ public class CommentServiceImpl implements CommentService {
             replyLists = new List[]{replies, userReplies};
         }
 
-        List[] list = new List[]{commentLists,userComments, Arrays.asList(replyLists)};
+        List[] list = new List[]{commentLists, userComments, Arrays.asList(replyLists)};
         response.insert(list);
         return response.sendSuccess();
     }
@@ -152,7 +158,7 @@ public class CommentServiceImpl implements CommentService {
         reply = new Reply();
         comment = new Comment();
 
-        if(commentJpaRepository.existsByCommentId(comment_id)){
+        if (commentJpaRepository.existsByCommentId(comment_id)) {
             userId = SecurityContextHolder.getContext().getAuthentication().getName();
             long createTime = System.currentTimeMillis();
             reply.setCommentId(comment_id);
@@ -175,7 +181,7 @@ public class CommentServiceImpl implements CommentService {
             response.insert("user", userComment);
 
             return response.sendSuccess();
-        }else {
+        } else {
             return response.sendFailure(Status.COMMENT_HAS_DELETE, "评论已删除");
         }
     }
@@ -187,9 +193,9 @@ public class CommentServiceImpl implements CommentService {
         comment = new Comment();
 
         String targetId;
-        if(commentId != null){
+        if (commentId != null) {
             //判断reply表里面是否存在commentId
-            if(replyJpaRepository.existsByCommentId(commentId)){
+            if (replyJpaRepository.existsByCommentId(commentId)) {
                 targetId = commentJpaRepository.findByCommentId(commentId).getTargetId();
                 //如果存在，连带评论一起删除
                 int count = replyJpaRepository.findCommentCount(commentId);//需要删除的回复的数量
@@ -199,27 +205,27 @@ public class CommentServiceImpl implements CommentService {
                 articleJpaRepository.updateCommentsByArticleId(articleJpaRepository.findCommentsByArticleId(targetId) - 1 - count, targetId);
                 articleJpaRepository.updateLevelsByArticleId(articleJpaRepository.findLevelsByArticleId(targetId) - 1, targetId);
                 return response.sendSuccess();
-            }else {
+            } else {
                 //如果不存在，就只删除comment数据
-                if(commentJpaRepository.findByCommentId(commentId) != null) {
+                if (commentJpaRepository.findByCommentId(commentId) != null) {
                     targetId = commentJpaRepository.findByCommentId(commentId).getTargetId();
                     commentJpaRepository.deleteByCommentId(commentId);
                     articleJpaRepository.updateCommentsByArticleId(articleJpaRepository.findCommentsByArticleId(targetId) - 1, targetId);
                     articleJpaRepository.updateLevelsByArticleId(articleJpaRepository.findLevelsByArticleId(targetId) - 1, targetId);
                     return response.sendSuccess();
-                }else {
-                    return response.sendFailure(Status.COMMENT_HAS_DELETE,"评论已删除");
+                } else {
+                    return response.sendFailure(Status.COMMENT_HAS_DELETE, "评论已删除");
                 }
             }
-        }else {
-            if(replyId != null){
-                if(replyJpaRepository.findByReplyId(replyId) != null) {
+        } else {
+            if (replyId != null) {
+                if (replyJpaRepository.findByReplyId(replyId) != null) {
                     replyJpaRepository.deleteByReplyId(replyId);
                     return response.sendSuccess();
-                }else {
-                    return response.sendFailure(Status.COMMENT_HAS_DELETE,"评论已删除");
+                } else {
+                    return response.sendFailure(Status.COMMENT_HAS_DELETE, "评论已删除");
                 }
-            }else {
+            } else {
                 throw new NoSuchFieldException("评论和回复id不能同时为空");
             }
         }
@@ -232,7 +238,7 @@ public class CommentServiceImpl implements CommentService {
         userId = SecurityContextHolder.getContext().getAuthentication().getName();
         commentVote = new CommentVote();
 
-        if(commentVoteJpaRepository.findByUserIdAndTargetId(userId, commentId) == null
+        if (commentVoteJpaRepository.findByUserIdAndTargetId(userId, commentId) == null
                 && commentVoteJpaRepository.findByUserIdAndTargetId(userId, replyId) == null) {
             if (commentJpaRepository.existsByCommentId(commentId)) {
                 commentVote.setUserId(userId);
@@ -244,7 +250,7 @@ public class CommentServiceImpl implements CommentService {
                 commentJpaRepository.updateCommentSupport(support, commentId);
                 response.insert("support", commentJpaRepository.findSupportByCommentId(commentId));
                 return response.sendSuccess();
-            }else if(replyJpaRepository.existsByReplyId(replyId)) {
+            } else if (replyJpaRepository.existsByReplyId(replyId)) {
                 commentVote.setUserId(userId);
                 commentVote.setTargetId(replyId);
                 commentVote.setStatus(1);
@@ -254,8 +260,8 @@ public class CommentServiceImpl implements CommentService {
                 replyJpaRepository.updateReplySupport(support, replyId);
                 response.insert("support", replyJpaRepository.findSupportByReplyId(replyId));
                 return response.sendSuccess();
-            }else {
-                return response.sendFailure(Status.COMMENT_HAS_DELETE,"评论已删除或不存在");
+            } else {
+                return response.sendFailure(Status.COMMENT_HAS_DELETE, "评论已删除或不存在");
             }
         } else {
             return this.supportDel(commentId, replyId);
@@ -268,7 +274,7 @@ public class CommentServiceImpl implements CommentService {
         userId = SecurityContextHolder.getContext().getAuthentication().getName();
         commentVote = new CommentVote();
 
-        if(!commentVoteJpaRepository.existsByUserIdAndTargetId(userId, commentId)
+        if (!commentVoteJpaRepository.existsByUserIdAndTargetId(userId, commentId)
                 && !commentVoteJpaRepository.existsByUserIdAndTargetId(userId, replyId)) {
             if (commentJpaRepository.existsByCommentId(commentId)) {
                 commentVote.setUserId(userId);
@@ -280,7 +286,7 @@ public class CommentServiceImpl implements CommentService {
                 commentJpaRepository.updateCommentObject(object, commentId);
                 response.insert("object", commentJpaRepository.findObjectByCommentId(commentId));
                 return response.sendSuccess();
-            }else if(replyJpaRepository.existsByReplyId(replyId)) {
+            } else if (replyJpaRepository.existsByReplyId(replyId)) {
                 commentVote.setUserId(userId);
                 commentVote.setTargetId(replyId);
                 commentVote.setStatus(0);
@@ -290,8 +296,8 @@ public class CommentServiceImpl implements CommentService {
                 replyJpaRepository.updateReplyObject(object, replyId);
                 response.insert("object", replyJpaRepository.findObjectByReplyId(replyId));
                 return response.sendSuccess();
-            }else {
-                return response.sendFailure(Status.COMMENT_HAS_DELETE,"评论已删除或不存在");
+            } else {
+                return response.sendFailure(Status.COMMENT_HAS_DELETE, "评论已删除或不存在");
             }
 
         } else {
@@ -302,24 +308,24 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public String supportDel(String commentId, String replyId) {
         response = new Response();
-        if(commentId != null){
-            if(commentVoteJpaRepository.existsByUserIdAndTargetId(userId, commentId)) {
+        if (commentId != null) {
+            if (commentVoteJpaRepository.existsByUserIdAndTargetId(userId, commentId)) {
                 commentVoteJpaRepository.deleteByTargetId(commentId);
                 int support = commentJpaRepository.findSupportByCommentId(commentId) - 1;
                 commentJpaRepository.updateCommentSupport(support, commentId);
                 response.insert("support", support);
                 return response.sendSuccess();
-            }else {
+            } else {
                 return this.support(commentId, replyId);
             }
-        }else {
-            if(commentVoteJpaRepository.existsByUserIdAndTargetId(userId, replyId)) {
+        } else {
+            if (commentVoteJpaRepository.existsByUserIdAndTargetId(userId, replyId)) {
                 commentVoteJpaRepository.deleteByTargetId(replyId);
                 int support = replyJpaRepository.findSupportByReplyId(replyId) - 1;
                 replyJpaRepository.updateReplySupport(support, replyId);
                 response.insert("support", support);
                 return response.sendSuccess();
-            }else {
+            } else {
                 return this.support(commentId, replyId);
             }
         }
@@ -330,24 +336,24 @@ public class CommentServiceImpl implements CommentService {
         response = new Response();
         boolean status1 = commentVoteJpaRepository.existsByUserIdAndTargetId(userId, commentId);
         boolean status2 = commentVoteJpaRepository.existsByUserIdAndTargetId(userId, replyId);
-        if(commentId != null){
-            if (status1){
+        if (commentId != null) {
+            if (status1) {
                 commentVoteJpaRepository.deleteByTargetId(commentId);
                 int object = commentJpaRepository.findObjectByCommentId(commentId) - 1;
                 commentJpaRepository.updateCommentObject(object, commentId);
                 response.insert("object", object);
                 return response.sendSuccess();
-            }else {
+            } else {
                 return this.object(commentId, replyId);
             }
-        }else {
-            if(status2){
+        } else {
+            if (status2) {
                 commentVoteJpaRepository.deleteByTargetId(replyId);
                 int object = replyJpaRepository.findObjectByReplyId(replyId) - 1;
                 replyJpaRepository.updateReplyObject(object, replyId);
                 response.insert("object", object);
                 return response.sendSuccess();
-            }else {
+            } else {
                 return this.object(commentId, replyId);
             }
         }

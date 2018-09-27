@@ -20,11 +20,11 @@ public interface ArticleCollectionJpaRepository extends JpaRepository<ArticleCol
     @Transactional
     @Modifying
     @Query(value = "delete from article_collection where article_id=?1 and user_id=?2", nativeQuery = true)
-    int deleteByArticleIdAndUserId(String articleId, String userId);
+    void deleteByArticleIdAndUserId(String articleId, String userId);
 
     @Transactional
     @Modifying
     @Query(value = "delete from article_collection where article_id=?1", nativeQuery = true)
-    int deleteByArticleId(String articleId);
+    void deleteByArticleId(String articleId);
 
 }

@@ -7,9 +7,4 @@ import java.util.List;
 
 
 public interface UserRoleJpaRepository extends JpaRepository<Role, Integer> {
-    List<Role> findAll();
-
-    String findRoleByRoleId(int roleId);
-
-
 }

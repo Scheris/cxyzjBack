@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,13 +22,12 @@ public interface CommentVoteJpaRepository extends JpaRepository<CommentVote, Int
 
     @Transactional
     @Modifying
-    @Query(value = "insert into comment_vote values(,?1, ?2, ?3)", nativeQuery = true)
-    void Insert(String userId, String targetId, int status_id);
+    @Query(value = "delete from comment_vote where target_id=?1", nativeQuery = true)
+    void deleteByTargetId(String target_id);
 
     @Transactional
     @Modifying
-    @Query(value = "delete from comment_vote where target_id=?1", nativeQuery = true)
-    int deleteByTargetId(String target_id);
+    void deleteAllByTargetId(Collection<String> targetId);
 
     boolean existsByUserIdAndTargetId(String userId, String targetId);
 }

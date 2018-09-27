@@ -36,6 +36,12 @@ public class UserListGetServiceImpl implements UserListGetService {
     private UserAttentionJpaRepository userAttentionJpaRepository;
     private Response response;
 
+    /**
+     * @param userId  用户ID
+     * @param pageNum 页码（从0开始）
+     * @return 关注列表
+     * @checked true
+     */
     @Override
     public String getAttentionList(String userId, int pageNum) {
         response = new Response();
@@ -47,6 +53,12 @@ public class UserListGetServiceImpl implements UserListGetService {
         return response.sendSuccess();
     }
 
+    /**
+     * @param userId  用户ID
+     * @param pageNum 页码（从0开始）
+     * @return 粉丝列表
+     * @checked true
+     */
     @Override
     public String getFansList(String userId, int pageNum) {
         response = new Response();

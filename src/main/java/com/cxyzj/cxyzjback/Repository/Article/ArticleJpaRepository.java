@@ -16,17 +16,16 @@ public interface ArticleJpaRepository extends JpaRepository<Article, Integer> {
 
     Article findByArticleId(String articleId);
 
-    Article findByUpdateTime(long updateTime);
 
     @Transactional
     @Modifying
     @Query(value = "update article set comments=?1 where article_id=?2", nativeQuery = true)
-    int updateCommentsByArticleId(int comments, String articleId);
+    void updateCommentsByArticleId(int comments, String articleId);
 
     @Transactional
     @Modifying
     @Query(value = "update article set levels=?1 where article_id=?2", nativeQuery = true)
-    int updateLevelsByArticleId(int levels, String articleId);
+    void updateLevelsByArticleId(int levels, String articleId);
 
     @Transactional
     @Query(value = "select comments from article where article_id=?1", nativeQuery = true)
@@ -39,17 +38,19 @@ public interface ArticleJpaRepository extends JpaRepository<Article, Integer> {
 
     boolean existsByArticleId(String articleId);
 
-    @Transactional
-    @Query(value = "select collections from article where article_id=?1", nativeQuery = true)
-    int findCollectionsByArticleId(String articleId);
 
     @Transactional
     @Modifying
-    @Query(value = "update article set collections=?1 where article_id=?2", nativeQuery = true)
-    int updateCollectionsByArticleId(int collections, String articleId);
+    @Query(value = "update article a set a.collections=a.collections+1 where article_id=?1", nativeQuery = true)
+    void increaseCollectionsByArticleId(String articleId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "update article a set a.collections=a.collections-1 where article_id=?1", nativeQuery = true)
+    void deleteCollectionsByArticleId(String articleId);
 
     @Transactional
     @Modifying
     @Query(value = "delete from article where article_id=?1", nativeQuery = true)
-    int deleteByArticleId(String articleId);
+    void deleteByArticleId(String articleId);
 }

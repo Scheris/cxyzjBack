@@ -37,7 +37,14 @@ public class AuthServiceImpl implements AuthService {
     @Resource
     private RedisService redisService;
 
-
+    /**
+     * @param email    邮箱
+     * @param phone    手机
+     * @param password 密码
+     * @return 用户信息
+     * @throws NoSuchFieldException 邮箱或手机均为空
+     * @checked true
+     */
     @Override
     public String login(String email, String phone, String password) throws NoSuchFieldException {
         JWTUtils jwtUtils = new JWTUtils();
@@ -60,13 +67,9 @@ public class AuthServiceImpl implements AuthService {
         }
         if (user.getPassword().equals(password)) {
             userJpaRepository.updateLoginDateByUserId(System.currentTimeMillis(), user.getUserId());//更新用户登陆时间
-
-            String token = jwtUtils.generateToken(user);//生成用户token
-            log.info("token:  " + token);
-            //注意：后端从数据库中查找到的数据不可以直接返回，需要重新自定义一个数据结构！
-            UserBasic loginResult = new UserBasic(user);//转换返回的数据为前端需要的数据
-            response.insert("token", token);
+            UserBasic loginResult = new UserBasic(user);
             response.insert("user", loginResult);
+            response.insert("token", jwtUtils.generateToken(user));
             response.insert("refreshToken", jwtUtils.generateRefreshToken(user));
             return response.sendSuccess();
         } else {
@@ -74,6 +77,16 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    /**
+     * @param nickname 昵称
+     * @param email    邮箱
+     * @param password 密码
+     * @param gender   性别
+     * @param phone    手机
+     * @param headUrl  头像
+     * @return 用户信息
+     * @checked true
+     */
     @Override
     public String register(String nickname, String email, String password, int gender, String phone, String headUrl) {
         //注册时间
@@ -97,31 +110,38 @@ public class AuthServiceImpl implements AuthService {
         user.setPhone(phone);
         user.setRegistDate(time);
         user.setHeadUrl(headUrl);
-        user.setRoleId(1);
         user.setLoginDate(System.currentTimeMillis());
         userJpaRepository.save(user);
         String token = jwtUtils.generateToken(user);//生成用户token
-        String refreshToken = jwtUtils.generateRefreshToken(user);
+        String refreshToken = jwtUtils.generateRefreshToken(user);//生成用户refreshToken
         response.insert("refreshToken", refreshToken);
         response.insert("token", token);
         response.insert("user", new UserBasic(user));
         return response.sendSuccess();
     }
 
+    /**
+     * @param email 邮箱
+     * @param phone 手机
+     * @return 验证码是否发送成功
+     * @throws NoSuchFieldException 手机邮箱均为空
+     * @checked true
+     * @Description: 项目完成后需要将手机发送的注释去掉
+     */
     @Override
-    public String sendCode(String email, String phone) throws Exception {
+    public String sendCode(String email, String phone) throws NoSuchFieldException {
         // TODO 删除注释
         RedisKeyDto redisKeyDto = new RedisKeyDto();
         response = new Response();
         CodeSend codeSend = new CodeSend();
-        boolean result = false;
+        boolean result;
         if (email != null) {
             String code = Code.mailCode();
             redisKeyDto.setKeys(email);
             redisKeyDto.setValues(code);
             redisService.addRedisData(redisKeyDto, EXPIRATIONTIME);
             String text = "你好，你现在正在绑定邮箱，请在 30 分钟内输入以下验证码完成绑定。 如非你本人操作，请忽略此邮件。";
-            result = codeSend.mailSend(email, code,text);
+            result = codeSend.mailSend(email, code, text);
         } else {
             if (phone != null) {
                 String code = Code.phoneCode();
@@ -142,6 +162,14 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    /**
+     * @param phone 手机
+     * @param email 邮箱
+     * @param code  验证码
+     * @return 是否验证成功
+     * @throws NoSuchFieldException 邮箱手机均为空
+     * @checked true
+     */
     @Override
     public String verifyCode(String phone, String email, String code) throws NoSuchFieldException {
         response = new Response();
@@ -170,41 +198,53 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+    /**
+     * @param phone 手机
+     * @param code  验证码
+     * @return 用户信息
+     * @checked true
+     */
+
     @Override
-    public String loginCode(String phone, String code) throws NoSuchFieldException {
+    public String loginCode(String phone, String code) {
         RedisKeyDto redisKeyDto = new RedisKeyDto();
         response = new Response();
         JWTUtils jwtUtils = new JWTUtils();
         User user;
-        if (phone != null) {
-            user = userJpaRepository.findByPhone(phone);
-            if (user != null) {
-                //用户存在
-                redisKeyDto.setKeys(phone);
-                RedisKeyDto result = redisService.redisGet(redisKeyDto);
-                if (result != null && result.getValues().equals(String.valueOf(code))) {//验证成功
-                    userJpaRepository.updateLoginDateByUserId(System.currentTimeMillis(), user.getUserId());//更新用户登陆时间
-                    redisService.delete(redisKeyDto);
-                    String token = jwtUtils.generateToken(user);
-                    String refreshToken = jwtUtils.generateRefreshToken(user);
-                    log.info("token:  " + token);
-                    log.info("refreshToken:  " + refreshToken);
-                    UserBasic loginResult = new UserBasic(user);
-                    response.insert("token", token);
-                    response.insert("refreshToken", refreshToken);
-                    response.insert("user", loginResult);
-                    return response.sendSuccess();
-                } else {
-                    return response.sendFailure(Status.CODE_ERROR, "验证码错误！");
-                }
+        user = userJpaRepository.findByPhone(phone);
+        if (user != null) {
+            //用户存在
+            redisKeyDto.setKeys(phone);
+            RedisKeyDto result = redisService.redisGet(redisKeyDto);
+            if (result != null && result.getValues().equals(String.valueOf(code))) {//验证成功
+                userJpaRepository.updateLoginDateByUserId(System.currentTimeMillis(), user.getUserId());//更新用户登陆时间
+                redisService.delete(redisKeyDto);
+                String token = jwtUtils.generateToken(user);
+                String refreshToken = jwtUtils.generateRefreshToken(user);
+                log.info("token:  " + token);
+                log.info("refreshToken:  " + refreshToken);
+                UserBasic loginResult = new UserBasic(user);
+                response.insert("token", token);
+                response.insert("refreshToken", refreshToken);
+                response.insert("user", loginResult);
+                return response.sendSuccess();
             } else {
-                return response.sendFailure(Status.NONE_USER, "用户不存在");
+                return response.sendFailure(Status.CODE_ERROR, "验证码错误！");
             }
         } else {
-            throw new NoSuchFieldException("请输入手机号！");
+            return response.sendFailure(Status.NONE_USER, "用户不存在");
         }
     }
 
+    /**
+     * @param email    邮箱
+     * @param phone    手机
+     * @param password 密码
+     * @param code     验证码
+     * @return 密码是否重置成功
+     * @throws NoSuchFieldException 邮箱或手机均为空
+     * @checked true
+     */
     @Override
     public String forgetPassword(String email, String phone, String password, String code) throws NoSuchFieldException {
 
@@ -237,18 +277,22 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    /**
+     * @param email    邮箱
+     * @param phone    手机
+     * @param nickname 昵称
+     * @return 用户是否存在
+     * @throws NoSuchFieldException 参数均为空
+     * @checked true
+     */
     @Override
     public String existUser(String email, String phone, String nickname) throws NoSuchFieldException {
         response = new Response();
-        boolean exist = false;
-        if (email != null && userJpaRepository.existsByEmail(email)) {
-            exist = true;
-        } else if (phone != null && userJpaRepository.existsByPhone(phone)) {
-            exist = true;
-        } else if (nickname != null && userJpaRepository.existsByNickname(nickname)) {
-            exist = true;
-        } else if (email == null && phone == null && nickname == null) {
+        boolean exist;
+        if (email == null && phone == null && nickname == null) {
             throw new NoSuchFieldException();
+        } else {
+            exist = userJpaRepository.existsByEmailOrPhoneOrNickname(email, phone, nickname);
         }
         response.insert("exist", exist);
         return response.sendSuccess();

@@ -22,12 +22,12 @@ public interface CommentJpaRepository extends JpaRepository<Comment, Integer> {
     @Transactional
     @Modifying
     @Query(value = "delete from comment where comment_id=?1", nativeQuery = true)
-    int deleteByCommentId(String commentId);
+    void deleteByCommentId(String commentId);
 
     @Transactional
     @Modifying
     @Query(value = "delete from comment where target_id=?1", nativeQuery = true)
-    int deleteByTargetId(String targetId);
+    void deleteByTargetId(String targetId);
 
     @Transactional
     @Query(value = "select level from comment where target_id=?1", nativeQuery = true)
@@ -36,15 +36,14 @@ public interface CommentJpaRepository extends JpaRepository<Comment, Integer> {
     @Transactional
     @Modifying
     @Query(value = "update comment set children=?1 where comment_id=?2", nativeQuery = true)
-    int updateChildren(int children, String commentId);
+    void updateChildren(int children, String commentId);
 
     @Transactional
     @Query(value = "select children from comment where comment_id=?1", nativeQuery = true)
     int findChildren(String commentId);
 
-    @Transactional
-    @Query(value = "select * from comment where target_id=?1", nativeQuery = true)
-    List<Comment> findListByTargetId(String article_id);
+
+    List<Comment> findAllByTargetId(String article_id);
 
     @Transactional
     @Query(value = "select * from comment LIMIT ?1,?2", nativeQuery = true)
@@ -57,7 +56,7 @@ public interface CommentJpaRepository extends JpaRepository<Comment, Integer> {
     @Transactional
     @Modifying
     @Query(value = "update comment set support=?1 where comment_id=?2", nativeQuery = true)
-    int updateCommentSupport(int support, String commentId);
+    void updateCommentSupport(int support, String commentId);
 
     @Transactional
     @Query(value = "select object from comment where comment_id=?1", nativeQuery = true)
@@ -66,5 +65,5 @@ public interface CommentJpaRepository extends JpaRepository<Comment, Integer> {
     @Transactional
     @Modifying
     @Query(value = "update comment set object=?1 where comment_id=?2", nativeQuery = true)
-    int updateCommentObject(int object, String commentId);
+    void updateCommentObject(int object, String commentId);
 }
