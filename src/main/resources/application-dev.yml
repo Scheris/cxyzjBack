@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/cxyzj?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8
     username: root
-    password: 15250823423wyX
+    password: 980506
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -22,8 +22,6 @@ spring:
       enabled: true
       max-file-size: 100Mb
       max-request-size: 100Mb
-
-
 logging:
   level:
     org.springframework:
@@ -34,7 +32,7 @@ logging:
     com.dy.springboot.server.mapper: debug
     com.spring.jiminshiro.mapper: debug
 server:
-  port: 8080
+  port: 9527
 
 filePath:
   avatar: E:/workspace/cxyzj_nuxt/static/img/Avatar/
