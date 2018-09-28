@@ -8,5 +8,5 @@ import org.springframework.web.multipart.MultipartFile;
  * @Description:
  */
 public interface UtilService {
-    String fileUpload(MultipartFile multipartFile);
+    String fileUpload(MultipartFile multipartFile,String type);
 }

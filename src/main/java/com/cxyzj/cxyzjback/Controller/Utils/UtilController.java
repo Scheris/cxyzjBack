@@ -22,10 +22,10 @@ public class UtilController {
     @Autowired
     private UtilService utilService;
 
-//    @PostMapping(value = "/upload")
-//    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-//    public String fileUpload(@RequestParam MultipartFile file){
-//        return utilService.fileUpload(file);
-//    }
+    @PostMapping(value = "/upload/{type}")
+    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String fileUpload(@RequestParam MultipartFile file, @PathVariable(name = "type") String type) {
+        return utilService.fileUpload(file,type);
+    }
 
 }
