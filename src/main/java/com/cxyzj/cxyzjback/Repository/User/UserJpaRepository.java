@@ -4,6 +4,7 @@ import com.cxyzj.cxyzjback.Bean.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
@@ -96,7 +97,6 @@ public interface UserJpaRepository extends JpaRepository<User, String> {
     @Query(value = "select fans from user where user_id=?1", nativeQuery = true)
     int getUserFans(String userId);
 
-
     @Transactional
     @Modifying
     @Query(value = "update user p set p.fans=?1 where user_id=?2", nativeQuery = true)
@@ -119,11 +119,11 @@ public interface UserJpaRepository extends JpaRepository<User, String> {
 
     @Transactional
     @Modifying
-    @Query(value = "update user u set u.articles=u.articles+1 where u.user_id=?1", nativeQuery = true)
-    void increaseArticlesByUserId(String userId);
+    @Query(value = "update user set user.articles=user.articles+?1 where user.user_id=?2", nativeQuery = true)
+    void increaseArticlesByUserId(int n, String userId);
 
     @Transactional
     @Modifying
-    @Query(value = "update user u set u.articles=u.articles-1 where u.user_id=?1", nativeQuery = true)
-    void deleteArticlesByUserId(String userId);
+    @Query(value = "update user set user.articles=user.articles-?1 where user.user_id=?2", nativeQuery = true)
+    void deleteArticlesByUserId(int n, String userId);
 }

@@ -34,8 +34,8 @@ public class Article {
     @Column(name = "article_sum")
     private String articleSum;
 
-    @Column(name = "type_id")
-    private String typeId;
+    @Column(name = "label_id")
+    private String labelId;
 
     @Column(name = "views")
     private int views = 0;
@@ -53,7 +53,7 @@ public class Article {
     private String thumbnail;
 
     @Column(name = "status_id")
-    private int status_id;
+    private int statusId;
 
     @Column(name = "levels")
     private int levels;

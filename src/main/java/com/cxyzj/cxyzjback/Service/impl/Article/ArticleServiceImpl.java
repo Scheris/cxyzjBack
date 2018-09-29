@@ -3,7 +3,7 @@ package com.cxyzj.cxyzjback.Service.impl.Article;
 import com.cxyzj.cxyzjback.Bean.Article.*;
 import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Data.Article.ArticleBasic;
-import com.cxyzj.cxyzjback.Data.Article.ArticleTypeBasic;
+import com.cxyzj.cxyzjback.Data.Article.ArticleLabelBasic;
 import com.cxyzj.cxyzjback.Data.User.UserBasic;
 import com.cxyzj.cxyzjback.Repository.Article.*;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
@@ -31,7 +31,7 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleJpaRepository articleJpaRepository;
 
     @Autowired
-    private ArticleTypeJpaRepository articleTypeJpaRepository;
+    private ArticleLabelJpaRepository articleLabelJpaRepository;
 
     @Autowired
     private UserJpaRepository userJpaRepository;
@@ -52,55 +52,36 @@ public class ArticleServiceImpl implements ArticleService {
     private String userId;
 
     /**
-     *
-     * @param title 文章标题
-     * @param text 文章内容
-     * @param type_id 文章类型
+     * @param title       文章标题
+     * @param text        文章内容
+     * @param label_id    文章类型
      * @param article_sum 文章概要
-     * @param thumbnail 缩略图
-     * @param status_id 文章状态
-     * @param user_id 用户id
+     * @param thumbnail   缩略图
+     * @param status_id   文章状态
+     * @param user_id     用户id
      * @return 文章ID
      * @checked true
      */
     @Override
-    public String writeArticle(String title, String text, String type_id, String article_sum,
+    public String writeArticle(String title, String text, String label_id, String article_sum,
                                String thumbnail, int status_id, String user_id) {
         response = new Response();
         Article article = new Article();
         article.setTitle(title);
         article.setText(text);
-        article.setTypeId(type_id);
+        article.setLabelId(label_id);
         article.setArticleSum(article_sum);
         article.setThumbnail(thumbnail);
-        article.setStatus_id(status_id);
+        article.setStatusId(status_id);
         article.setUserId(user_id);
         article.setUpdateTime(System.currentTimeMillis());
-
+        //TODO 需要在label表中给quantity字段+1
         article = articleJpaRepository.save(article);
-        userJpaRepository.increaseArticlesByUserId(userId);//文章数+1
+        userJpaRepository.increaseArticlesByUserId(1, user_id);//文章数+1
         response.insert("article_id", article.getArticleId());
         return response.sendSuccess();
     }
 
-    /**
-     * @return 文章类型数据
-     * @checked true
-     * @Description: 以后可进行优化点：类型一般来说不会轻易修改，所以可以做缓存处理，不用每次都从数据库读取，
-     * 但考虑到后台管理员还是可能会增加新的类型，所以如果后台新增了新的类型，则重新读取type数据并缓存处理。
-     */
-    @Override
-    public String getTypes() {
-        response = new Response();
-        List<ArticleType> articleTypes = articleTypeJpaRepository.findAll();
-        List<ArticleTypeBasic> articleTypeList = new ArrayList<>();
-        for (ArticleType articleType : articleTypes) {
-            ArticleTypeBasic articleTypeBasic = new ArticleTypeBasic(articleType);
-            articleTypeList.add(articleTypeBasic);
-        }
-        response.insert("type", articleTypeList);
-        return response.sendSuccess();
-    }
 
     /**
      * @param articleId 文章ID
@@ -118,7 +99,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         ArticleBasic articleBasic = new ArticleBasic(article);
         User user = userJpaRepository.findByUserId(article.getUserId());
-        ArticleType articleType = articleTypeJpaRepository.findByTypeId(article.getTypeId());
+        ArticleLabel articleLabel = articleLabelJpaRepository.findByLabelId(article.getLabelId());
 
         if (userId.equals(article.getUserId())) {
             //是作者
@@ -137,7 +118,7 @@ public class ArticleServiceImpl implements ArticleService {
             }
         }
 
-        response.insert("type", new ArticleTypeBasic(articleType));
+        response.insert("label", new ArticleLabelBasic(articleLabel));
         response.insert("user", new UserBasic(user));
         return response.sendSuccess();
     }
@@ -206,7 +187,8 @@ public class ArticleServiceImpl implements ArticleService {
             commentJpaRepository.deleteByTargetId(articleId);//删除评论
             articleCollectionJpaRepository.deleteByArticleId(articleId);//删除文章收藏
             articleJpaRepository.deleteByArticleId(articleId);//删除文章
-            userJpaRepository.deleteArticlesByUserId(userId);//将用户的文章数-1
+            userJpaRepository.deleteArticlesByUserId(1, userId);//将用户的文章数-1
+            //TODO 需要在label表中给quantity字段-1
             return response.sendSuccess();
         } else {
             return response.sendFailure(Status.ARTICLE_NOT_EXIST, "文章不存在！");

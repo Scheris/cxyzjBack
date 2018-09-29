@@ -35,7 +35,8 @@ public final class Status {
     public static final int ARTICLE_HAS_COLLECTED = 131;//文章已被收藏
     public static final int ARTICLE_NOT_COLLECTED = 132;//文章未被收藏
     public static final int ARTICLE_NOT_EXIST = 133;//文章不存在
-
+    public static final int LABEL_NOT_EXIST = 134;//标签不存在
+    public static final int LABEL_HAS_SELECT = 135;//标签已被选择
     //discussion操作码161~190
 
 

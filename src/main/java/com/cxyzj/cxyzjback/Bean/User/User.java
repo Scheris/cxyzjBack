@@ -33,7 +33,7 @@ public class User {
     @Column(name = "head_url")
     private String headUrl;
     @Column(name = "bg_url")
-    private String bgUrl = "/img/user/background.jpeg";
+    private String bgUrl = "/img/Background/default.jpg";
     @Column(name = "introduce")
     private String introduce = "这个人很懒，连介绍都没有(￢︿̫̿￢☆)";
     @Column(name = "regist_date")
@@ -43,7 +43,7 @@ public class User {
     @Column(name = "phone")
     private String phone;
     @Column(name = "theme_color")
-    private String themeColor = "rgba(255,255,255,1)";
+    private String themeColor = "rgba(255,255,255,.9)";
     @Column(name = "fans")
     private int fans = 0;
     @Column(name = "attentions")

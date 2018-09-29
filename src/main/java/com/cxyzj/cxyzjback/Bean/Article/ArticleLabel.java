@@ -13,18 +13,23 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "article_type")
-public class ArticleType {
+@Table(name = "article_label")
+public class ArticleLabel {
 
     @Id
     @GeneratedValue(generator = "SnowflakeIdGenerator")//自定义ID生成器
     @GenericGenerator(name = "SnowflakeIdGenerator", strategy = "com.cxyzj.cxyzjback.Utils.SnowflakeIdGenerator")
-    @Column(name = "type_id")
-    private String typeId;
-
-    @Column(name = "type_name")
-    private String typeName;
-
+    @Column(name = "label_id")
+    private String labelId;
+    @Column(name = "label_name")
+    private String labelName;
+    @Column(name = "quantity")
     private int quantity;
+    @Column(name = "thumb")
+    private String thumb;
+    @Column(name = "collections")
+    private int collections;
+    @Column(name = "introduce")
+    private String introduce;
 
 }
