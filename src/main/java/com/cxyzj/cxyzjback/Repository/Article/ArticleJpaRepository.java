@@ -31,6 +31,12 @@ public interface ArticleJpaRepository extends JpaRepository<Article, Integer> {
     @Query(value = "update article set comments=?1 where article_id=?2", nativeQuery = true)
     void updateCommentsByArticleId(int comments, String articleId);
 
+    Page<Article> findAllByUserIdAndStatusId(Pageable pageable, String userId, int statusId);
+
+    @Transactional
+    @Query(value = "select article.label_id from article where article_id=?1", nativeQuery = true)
+    Article findLabelIdByArticleId(String articleId);
+
     @Transactional
     @Modifying
     @Query(value = "update article set levels=?1 where article_id=?2", nativeQuery = true)
