@@ -24,12 +24,6 @@ public class ArticleController {
         return articleService.writeArticle(title, text, type_id, article_sum, thumbnail, status_id, user_id);
     }
 
-    @GetMapping(value = "/types")
-    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String getTypes(){
-        return articleService.getTypes();
-    }
-
     @GetMapping(value = "/{article_id}")
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String articleDetails(@PathVariable(name = "article_id") String article_id){
@@ -53,5 +47,26 @@ public class ArticleController {
     public String articleDel(@PathVariable(name = "article_id") String article_id,  @RequestParam String user_id){
         return articleService.articleDel(article_id, user_id);
     }
+
+    /**
+     * @Description 更新文章
+    */
+    @PostMapping(value = "/update/{article_id}")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')  and principal.username.equals(#user_id)")
+    public String articleUpdate(@PathVariable(name = "article_id") String article_id, @RequestParam String user_id,
+                                @RequestParam String title, @RequestParam String text, @RequestParam String article_sum, @RequestParam String label_id,
+                                @RequestParam String thumbnail, @RequestParam int status_id){
+        return articleService.articleUpdate(article_id, title, text, article_sum, label_id, thumbnail, status_id);
+    }
+
+    /**
+     * @Description 访问文章
+    */
+    @PutMapping(value = "/visit/{article_id}")
+    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String articleVisit(@PathVariable(name = "article_id") String article_id){
+        return articleService.visitArticle(article_id);
+    }
+
 
 }

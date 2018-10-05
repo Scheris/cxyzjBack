@@ -16,7 +16,7 @@ public interface ArticleService {
 
     String articleDel(String articleId, String userId);
 
-    String articleUpdate(String articleId, String title, String text, String articleSum, String typeId, String thumbnail, int statusId);
+    String articleUpdate(String articleId, String title, String text, String articleSum, String labelId, String thumbnail, int statusId);
 
     String draftList(int pageNum);
 

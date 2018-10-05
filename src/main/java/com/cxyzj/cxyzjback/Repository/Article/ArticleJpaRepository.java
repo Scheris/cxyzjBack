@@ -44,8 +44,8 @@ public interface ArticleJpaRepository extends JpaRepository<Article, Integer> {
 
     @Transactional
     @Modifying
-    @Query(value = "update article SET title=?1, text=?2,article_sum=?3,type_id=?4,thumbnail=?5,status_id=?6, update_time=?7 WHERE article_id=?8", nativeQuery = true)
-    void updateByArticleId(String title, String text, String articleSum, String typeId, String thumbnail, int statusId, long updateTime, String articleId);
+    @Query(value = "update article SET title=?1, text=?2,article_sum=?3,label_id=?4,thumbnail=?5,status_id=?6, update_time=?7 WHERE article_id=?8", nativeQuery = true)
+    void updateByArticleId(String title, String text, String articleSum, String labelId, String thumbnail, int statusId, long updateTime, String articleId);
 
 
     @Transactional

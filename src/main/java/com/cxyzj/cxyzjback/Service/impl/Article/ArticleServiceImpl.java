@@ -194,4 +194,25 @@ public class ArticleServiceImpl implements ArticleService {
             return response.sendFailure(Status.ARTICLE_NOT_EXIST, "文章不存在！");
         }
     }
+
+    @Override
+    public String articleUpdate(String articleId, String title, String text, String articleSum, String labelId, String thumbnail, int statusId) {
+        response = new Response();
+        long updateTime = System.currentTimeMillis();
+        articleJpaRepository.updateByArticleId(title, text, articleSum, labelId, thumbnail, statusId, updateTime, articleId);
+
+        return response.sendSuccess();
+    }
+
+    @Override
+    public String draftList(int pageNum) {
+        return null;
+    }
+
+    @Override
+    public String visitArticle(String article_id) {
+        response = new Response();
+        articleJpaRepository.updateViewsByArticleId(article_id);
+        return response.sendSuccess();
+    }
 }
