@@ -25,8 +25,8 @@ public class ArticleLabel {
     private String labelName;
     @Column(name = "quantity")
     private int quantity;
-    @Column(name = "thumb")
-    private String thumb;
+    @Column(name = "link")
+    private String link;
     @Column(name = "collections")
     private int collections;
     @Column(name = "introduce")

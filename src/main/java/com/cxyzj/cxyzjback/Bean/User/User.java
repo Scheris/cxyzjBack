@@ -15,7 +15,7 @@ import javax.persistence.*;
  */
 @Entity
 @Data //--Lombok注解
-@Table(name = "User")
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(generator = "SnowflakeIdGenerator")

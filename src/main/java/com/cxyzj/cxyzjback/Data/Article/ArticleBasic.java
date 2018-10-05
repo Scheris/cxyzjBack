@@ -27,7 +27,7 @@ public class ArticleBasic implements com.cxyzj.cxyzjback.Data.Data {
     private int status_id;
     private boolean is_author;
 
-    public ArticleBasic(Article article){
+    public ArticleBasic(Article article) {
         this.article_id = article.getArticleId();
         this.title = article.getTitle();
         this.article_sum = article.getArticleSum();
@@ -47,5 +47,11 @@ public class ArticleBasic implements com.cxyzj.cxyzjback.Data.Data {
     @Override
     public String getName() {
         return "article";
+    }
+
+    public void IsAuthor(boolean IsAuthor) {
+        this.allow_delete = IsAuthor;
+        this.allow_edit = IsAuthor;
+        this.is_author = IsAuthor;
     }
 }

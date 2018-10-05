@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,7 +31,6 @@ public interface UserJpaRepository extends JpaRepository<User, String> {
 
     User findByUserId(String userId);
 
-    List<User> findByUserId(Collection<String> userId);
 
     User findByEmail(String email);
 

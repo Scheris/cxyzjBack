@@ -16,9 +16,12 @@ public class ArticleLabelBasic implements com.cxyzj.cxyzjback.Data.Data {
 
     private String label_name;
 
-    public ArticleLabelBasic(ArticleLabel articleLabel){
+    private String link;
+
+    public ArticleLabelBasic(ArticleLabel articleLabel) {
         this.label_id = articleLabel.getLabelId();
         this.label_name = articleLabel.getLabelName();
+        this.link = articleLabel.getLink();
     }
 
     @Override

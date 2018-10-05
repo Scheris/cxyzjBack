@@ -16,7 +16,7 @@ public class PageData implements Data {
 
     public PageData(Page page, int now_page) {
         this.total = page.getTotalPages();
-        this.is_end = page.getTotalPages() <= now_page + 1;
+        this.is_end = page.getTotalPages() <= now_page + 1;//是否结束
         this.page_num = now_page;
     }
 

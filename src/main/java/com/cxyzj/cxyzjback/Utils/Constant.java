@@ -7,7 +7,9 @@ package com.cxyzj.cxyzjback.Utils;
  * @Description: 常量表
  */
 public final class Constant {
-    public static final int PAGE_ATTENTION_USER = 9;
+    public static final int PAGE_ATTENTION_USER = 9; //一页的用户数量
+    public static final int PAGE_ARTICLE = 10; //一页的文章数量
+
     //数据库status表的信息
     public static final int OBJECT = 0;//反对
     public static final int SUPPORT = 1;//支持

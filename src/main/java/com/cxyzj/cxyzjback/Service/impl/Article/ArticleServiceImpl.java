@@ -4,18 +4,30 @@ import com.cxyzj.cxyzjback.Bean.Article.*;
 import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Data.Article.ArticleBasic;
 import com.cxyzj.cxyzjback.Data.Article.ArticleLabelBasic;
+import com.cxyzj.cxyzjback.Data.Article.ArticleList;
+import com.cxyzj.cxyzjback.Data.Other.PageData;
+import com.cxyzj.cxyzjback.Data.User.OtherDetails;
 import com.cxyzj.cxyzjback.Data.User.UserBasic;
 import com.cxyzj.cxyzjback.Repository.Article.*;
+import com.cxyzj.cxyzjback.Repository.User.UserAttentionJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.Article.ArticleService;
+import com.cxyzj.cxyzjback.Utils.Constant;
 import com.cxyzj.cxyzjback.Utils.Response;
 import com.cxyzj.cxyzjback.Utils.Status;
+import com.cxyzj.cxyzjback.Utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -48,8 +60,12 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private CommentVoteJpaRepository commentVoteJpaRepository;
 
+    @Autowired
+    private UserAttentionJpaRepository userAttentionJpaRepository;
+
     private Response response;
     private String userId;
+
 
     /**
      * @param title       文章标题
@@ -75,7 +91,8 @@ public class ArticleServiceImpl implements ArticleService {
         article.setStatusId(status_id);
         article.setUserId(user_id);
         article.setUpdateTime(System.currentTimeMillis());
-        //TODO 需要在label表中给quantity字段+1
+
+        articleLabelJpaRepository.updateQuantityByLabelId(1, label_id);
         article = articleJpaRepository.save(article);
         userJpaRepository.increaseArticlesByUserId(1, user_id);//文章数+1
         response.insert("article_id", article.getArticleId());
@@ -171,6 +188,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public String articleDel(String articleId, String userId) {
         response = new Response();
+        String labelId = articleJpaRepository.findLabelIdByArticleId(articleId).getLabelId();
         if (articleJpaRepository.existsByArticleId(articleId)) {
             //存在文章
             ArrayList<String> commentVoteList = new ArrayList<>();
@@ -188,7 +206,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleCollectionJpaRepository.deleteByArticleId(articleId);//删除文章收藏
             articleJpaRepository.deleteByArticleId(articleId);//删除文章
             userJpaRepository.deleteArticlesByUserId(1, userId);//将用户的文章数-1
-            //TODO 需要在label表中给quantity字段-1
+            articleLabelJpaRepository.updateQuantityByLabelId(-1, labelId);
             return response.sendSuccess();
         } else {
             return response.sendFailure(Status.ARTICLE_NOT_EXIST, "文章不存在！");
@@ -206,7 +224,13 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public String draftList(int pageNum) {
-        return null;
+        response = new Response();
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();//获取用户ID
+        Page<Article> articlePage = articlePage(pageNum, Constant.DRAFT, userId);//获取到了一页的文章信息
+        PageData pageData = new PageData(articlePage, pageNum);//读取页面信息数据
+        response.insert("list", getArticleList(articlePage.iterator(), false));
+        response.insert(pageData);
+        return response.sendSuccess();
     }
 
     @Override
@@ -215,4 +239,69 @@ public class ArticleServiceImpl implements ArticleService {
         articleJpaRepository.updateViewsByArticleId(article_id);
         return response.sendSuccess();
     }
+
+
+    /**
+     * @param pageNum  页码（从0开始）
+     * @param statusId 文章状态
+     * @param userId   用户ID
+     * @return 文章查询结果信息
+     * @Description: 通过页码，文章状态和用户来查询指定的文章列表
+     */
+    private Page<Article> articlePage(int pageNum, int statusId, String userId) {
+        Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "articleId");//排序方式，按照文章id进行默认排序（从小到大）
+        Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_ARTICLE, sort);//设置分页信息，参数为：页码数，一次获取的个数，排序方式
+        return articleJpaRepository.findAllByUserIdAndStatusId(pageable, userId, statusId);
+    }
+
+    /**
+     * @param articleIterator 文章迭代器
+     * @param needUser        是否需要用户
+     * @return 文章列表信息
+     */
+    private List<ArticleList> getArticleList(Iterator<Article> articleIterator, boolean needUser) {
+        ArrayList<ArticleBasic> articles = new ArrayList<>();//文章列表
+        ArrayList<String> labelIdList = new ArrayList<>();//文章id列表（用于查询label）
+        ArrayList<String> userIdList = new ArrayList<>();//用户id列表
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        while (articleIterator.hasNext()) {
+            Article article = articleIterator.next();//获取一篇文章
+            ArticleBasic articleBasic = new ArticleBasic(article);//封装文章数据
+            articleBasic.IsAuthor(userId.equals(article.getUserId()));//设置是否为作者
+            articles.add(articleBasic);
+            labelIdList.add(article.getLabelId());//读取文章标签id
+            if (needUser) {
+                userIdList.add(article.getUserId());//读取文章作者
+            }
+        }
+
+        ArrayList<ArticleLabel> labelList = new ArrayList<>();//获取标签列表
+        for (String id : labelIdList) {
+            labelList.add(articleLabelJpaRepository.findByLabelId(id));//查询每一个label信息
+        }
+        ArrayList<User> userList = new ArrayList<>();
+        if (needUser) {
+            for (String id : userIdList) {
+                userList.add(userJpaRepository.findByUserId(id));//查询每一个user信息
+            }
+        }
+        ArrayList<ArticleList> resultList = new ArrayList<>();//返回的列表信息
+        for (int i = 0; i < articles.size(); i++) {
+            ArticleList articleList;
+            if (needUser) {
+                User user = userList.get(i);//获取文章用户
+                boolean status = false;
+                if (userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, user.getUserId())) {
+                    status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, user.getUserId()) == Constant.FOCUS;
+                }
+                OtherDetails otherDetails = new OtherDetails(user, status);//封装用户数据
+                articleList = new ArticleList(articles.get(i), new ArticleLabelBasic(labelList.get(i)), otherDetails);//封装数据
+            } else {
+                articleList = new ArticleList(articles.get(i), new ArticleLabelBasic(labelList.get(i)));//封装数据
+            }
+            resultList.add(articleList);
+        }
+        return resultList;
+    }
+
 }

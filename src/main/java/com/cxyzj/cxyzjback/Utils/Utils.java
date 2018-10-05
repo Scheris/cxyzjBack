@@ -1,12 +1,23 @@
 package com.cxyzj.cxyzjback.Utils;
 
+
+
+
 /**
  * @Package com.cxyzj.cxyzjback.Utils
  * @Author Yaser
  * @Date 2018/09/19 11:27
- * @Description:
+ * @Description: 工具类
  */
+
+
 public class Utils {
+
+    /**
+     * @param str     传入的手机或邮箱
+     * @param isPhone 是否是手机
+     * @return 返回对邮箱或手机进行掩码操作后的邮箱或手机
+     */
     public String maskEmailPhone(String str, boolean isPhone) {
         StringBuilder sb = new StringBuilder(str);
         int end;
@@ -26,4 +37,6 @@ public class Utils {
         sb.replace(start, end, maskCode.toString());
         return sb.toString();
     }
+
+
 }

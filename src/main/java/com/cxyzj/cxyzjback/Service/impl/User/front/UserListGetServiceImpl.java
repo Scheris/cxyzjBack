@@ -79,7 +79,7 @@ public class UserListGetServiceImpl implements UserListGetService {
 
     /**
      * 没写好，待定。。。
-    */
+     */
     @Override
     public String getArticleList(String userId, int pageNum) {
         response = new Response();
@@ -115,22 +115,22 @@ public class UserListGetServiceImpl implements UserListGetService {
         while (attentionIterator.hasNext()) {
             userIdList.add(attentionIterator.next().getTargetUser());
         }
-        List<User> users = userJpaRepository.findByUserId(userIdList);
         ArrayList<OtherDetails> otherDetailsArrayList = new ArrayList<>();
-        for (User user : users) {
+        for (String id : userIdList) {
+            User user = userJpaRepository.findByUserId(id);
             otherDetailsArrayList.add(new OtherDetails(user, isAttention));
         }
         return otherDetailsArrayList;
     }
 
-    private ArrayList<ArticleBasic> getArticleList(Iterator<Article> articleIterator){
+    private ArrayList<ArticleBasic> getArticleList(Iterator<Article> articleIterator) {
         ArrayList<String> articleIdList = new ArrayList<>();
-        while (articleIterator.hasNext()){
+        while (articleIterator.hasNext()) {
             articleIdList.add(articleIterator.next().getArticleId());
         }
         List<Article> articles = articleJpaRepository.findByArticleId(articleIdList);
         ArrayList<ArticleBasic> articleBasicArrayList = new ArrayList<>();
-        for(Article article : articles) {
+        for (Article article : articles) {
             articleBasicArrayList.add(new ArticleBasic(article));
         }
 

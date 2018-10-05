@@ -3,10 +3,7 @@ package com.cxyzj.cxyzjback.Service.impl.User.front;
 import com.cxyzj.cxyzjback.Bean.Redis.RedisKeyDto;
 import com.cxyzj.cxyzjback.Bean.User.Attention;
 import com.cxyzj.cxyzjback.Bean.User.User;
-import com.cxyzj.cxyzjback.Data.User.OtherDetails;
-import com.cxyzj.cxyzjback.Data.User.OtherSimple;
-import com.cxyzj.cxyzjback.Data.User.UserDetails;
-import com.cxyzj.cxyzjback.Data.User.UserSimple;
+import com.cxyzj.cxyzjback.Data.User.*;
 import com.cxyzj.cxyzjback.Repository.User.UserAttentionJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.Other.RedisService;
@@ -78,7 +75,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         response = new Response();
         user = userJpaRepository.findByUserId(SecurityContextHolder.getContext().getAuthentication().getName());
         if (user != null) {
-            response.insert(new UserSimple(user));
+            response.insert(new UserBasic(user));
             return response.sendSuccess();
         } else {
             return response.sendFailure(Status.NONE_USER, "用户不存在");
@@ -398,7 +395,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     /**
      * @param targetId （目标）用户id
-     * @return
      * @Description 关注用户（ROLE_USER）
      * @checked true
      */
@@ -460,7 +456,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     /**
      * @param targetId （目标）用户id
-     * @return
      * @Description 取消关注（ROLE_USER）
      * @checked true
      */
