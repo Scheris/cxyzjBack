@@ -1,10 +1,13 @@
 package com.cxyzj.cxyzjback.Service.impl.User.front;
 
 
+import com.cxyzj.cxyzjback.Bean.Article.Article;
 import com.cxyzj.cxyzjback.Bean.User.Attention;
 import com.cxyzj.cxyzjback.Bean.User.User;
+import com.cxyzj.cxyzjback.Data.Article.ArticleBasic;
 import com.cxyzj.cxyzjback.Data.Other.PageData;
 import com.cxyzj.cxyzjback.Data.User.OtherDetails;
+import com.cxyzj.cxyzjback.Repository.Article.ArticleJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserAttentionJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.User.front.UserListGetService;
@@ -17,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +38,9 @@ public class UserListGetServiceImpl implements UserListGetService {
 
     @Autowired
     private UserAttentionJpaRepository userAttentionJpaRepository;
+
+    @Autowired
+    private ArticleJpaRepository articleJpaRepository;
     private Response response;
 
     /**
@@ -71,6 +78,22 @@ public class UserListGetServiceImpl implements UserListGetService {
     }
 
     /**
+     * 没写好，待定。。。
+    */
+    @Override
+    public String getArticleList(String userId, int pageNum) {
+        response = new Response();
+        Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "userId");
+        Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_ATTENTION_USER, sort);
+        Page<Article> articlePage = articleJpaRepository.findAllByUserId(pageable, userId);
+        PageData pageData = new PageData(articlePage, pageNum);
+        ArrayList<ArticleBasic> articleBasicArrayList = getArticleList(articlePage.iterator());
+        response.insert(pageData);
+        response.insert("list", articleBasicArrayList);
+        return response.sendSuccess();
+    }
+
+    /**
      * @param pageNum 指定的页数
      * @param status  指定状态
      * @param userId  指定要查询的用户id
@@ -98,5 +121,19 @@ public class UserListGetServiceImpl implements UserListGetService {
             otherDetailsArrayList.add(new OtherDetails(user, isAttention));
         }
         return otherDetailsArrayList;
+    }
+
+    private ArrayList<ArticleBasic> getArticleList(Iterator<Article> articleIterator){
+        ArrayList<String> articleIdList = new ArrayList<>();
+        while (articleIterator.hasNext()){
+            articleIdList.add(articleIterator.next().getArticleId());
+        }
+        List<Article> articles = articleJpaRepository.findByArticleId(articleIdList);
+        ArrayList<ArticleBasic> articleBasicArrayList = new ArrayList<>();
+        for(Article article : articles) {
+            articleBasicArrayList.add(new ArticleBasic(article));
+        }
+
+        return articleBasicArrayList;
     }
 }

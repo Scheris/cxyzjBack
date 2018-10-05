@@ -9,4 +9,6 @@ public interface UserListGetService {
     String getAttentionList(String userId,int pageNum);
 
     String getFansList(String userId,int pageNum);
+
+    String getArticleList(String userId, int pageNum);
 }

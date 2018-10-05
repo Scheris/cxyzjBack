@@ -78,7 +78,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setUpdateTime(System.currentTimeMillis());
 
         article = articleJpaRepository.save(article);
-        userJpaRepository.increaseArticlesByUserId(userId);//文章数+1
+        userJpaRepository.increaseArticlesByUserId(1, userId);//文章数+1
         response.insert("article_id", article.getArticleId());
         return response.sendSuccess();
     }
@@ -206,10 +206,48 @@ public class ArticleServiceImpl implements ArticleService {
             commentJpaRepository.deleteByTargetId(articleId);//删除评论
             articleCollectionJpaRepository.deleteByArticleId(articleId);//删除文章收藏
             articleJpaRepository.deleteByArticleId(articleId);//删除文章
-            userJpaRepository.deleteArticlesByUserId(userId);//将用户的文章数-1
+            userJpaRepository.deleteArticlesByUserId(1, userId);//将用户的文章数-1
             return response.sendSuccess();
         } else {
             return response.sendFailure(Status.ARTICLE_NOT_EXIST, "文章不存在！");
         }
+    }
+
+    /**
+     * @param articleId
+     * @param title
+     * @param text
+     * @param articleSum
+     * @param typeId
+     * @param thumbnail
+     * @param statusId
+     * @Description 更新文章
+    */
+    @Override
+    public String articleUpdate(String articleId, String title, String text, String articleSum, String typeId, String thumbnail, int statusId) {
+        userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        response = new Response();
+        long updateTime = System.currentTimeMillis();
+
+        articleJpaRepository.updateByArticleId(title, text, articleSum, typeId, thumbnail, statusId, updateTime, articleId);
+
+        return response.sendSuccess();
+
+    }
+
+    @Override
+    public String draftList(int pageNum) {
+        return null;
+    }
+
+    /**
+     * @param article_id
+     * @Description 访问文章
+    */
+    @Override
+    public String visitArticle(String article_id) {
+        response = new Response();
+        articleJpaRepository.updateViewsByArticleId(article_id);
+        return response.sendSuccess();
     }
 }

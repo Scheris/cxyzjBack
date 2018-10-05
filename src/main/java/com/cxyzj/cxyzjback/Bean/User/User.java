@@ -14,14 +14,14 @@ import javax.persistence.*;
  * @Description:
  */
 @Entity
-@Data
+@Data //--Lombok注解
 @Table(name = "User")
 public class User {
     @Id
-    @GeneratedValue(generator = "SnowflakeIdGenerator")//自定义ID生成器
+    @GeneratedValue(generator = "SnowflakeIdGenerator")
     @GenericGenerator(name = "SnowflakeIdGenerator", strategy = "com.cxyzj.cxyzjback.Utils.SnowflakeIdGenerator")
     @Column(name = "user_id")
-    private String userId;//小驼峰命名
+    private String userId;
     @Column(name = "password")
     private String password;
     @Column(name = "nickname")

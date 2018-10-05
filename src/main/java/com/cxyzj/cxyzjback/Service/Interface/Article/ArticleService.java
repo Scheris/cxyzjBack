@@ -17,4 +17,10 @@ public interface ArticleService {
     String collectDel(String articleId);
 
     String articleDel(String articleId, String userId);
+
+    String articleUpdate(String articleId, String title, String text, String articleSum, String typeId, String thumbnail, int statusId);
+
+    String draftList(int pageNum);
+
+    String visitArticle(String article_id);
 }

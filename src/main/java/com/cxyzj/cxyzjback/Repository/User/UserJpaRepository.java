@@ -119,11 +119,11 @@ public interface UserJpaRepository extends JpaRepository<User, String> {
 
     @Transactional
     @Modifying
-    @Query(value = "update user u set u.articles=u.articles+1 where u.user_id=?1", nativeQuery = true)
-    void increaseArticlesByUserId(String userId);
+    @Query(value = "update user u set u.articles=u.articles+?1 where u.user_id=?1", nativeQuery = true)
+    void increaseArticlesByUserId(int n, String userId);
 
     @Transactional
     @Modifying
-    @Query(value = "update user u set u.articles=u.articles-1 where u.user_id=?1", nativeQuery = true)
-    void deleteArticlesByUserId(String userId);
+    @Query(value = "update user u set u.articles=u.articles-?1 where u.user_id=?1", nativeQuery = true)
+    void deleteArticlesByUserId(int n, String userId);
 }

@@ -32,5 +32,11 @@ public class UserListGetController {
         return userListGetService.getFansList(userId, pageNum);
     }
 
+    @GetMapping(value = "/{user_id}/article_list/{page_num}")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String getArticleList(@PathVariable(name = "user_id") String user_id, @PathVariable(name = "page_num") int pageNum){
+        return userListGetService.getArticleList(user_id, pageNum);
+    }
+
 
 }

@@ -22,7 +22,6 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-
     @PostMapping(value = "/login_password")
     public String login(@RequestParam(required = false) String email, @RequestParam String password, @RequestParam(required = false) String phone) {
         log.info("login");
