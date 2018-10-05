@@ -76,6 +76,8 @@ public class ArticleServiceImpl implements ArticleService {
         article.setUserId(user_id);
         article.setUpdateTime(System.currentTimeMillis());
         //TODO 需要在label表中给quantity字段+1
+        articleLabelJpaRepository.updateQuantityByLabelId(1, label_id);
+
         article = articleJpaRepository.save(article);
         userJpaRepository.increaseArticlesByUserId(1, user_id);//文章数+1
         response.insert("article_id", article.getArticleId());
@@ -171,6 +173,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public String articleDel(String articleId, String userId) {
         response = new Response();
+
+        String labelId = articleJpaRepository.findLabelIdByArticleId(articleId);
         if (articleJpaRepository.existsByArticleId(articleId)) {
             //存在文章
             ArrayList<String> commentVoteList = new ArrayList<>();
@@ -189,6 +193,8 @@ public class ArticleServiceImpl implements ArticleService {
             articleJpaRepository.deleteByArticleId(articleId);//删除文章
             userJpaRepository.deleteArticlesByUserId(1, userId);//将用户的文章数-1
             //TODO 需要在label表中给quantity字段-1
+            articleLabelJpaRepository.updateQuantityByLabelId(-1, labelId);
+
             return response.sendSuccess();
         } else {
             return response.sendFailure(Status.ARTICLE_NOT_EXIST, "文章不存在！");
