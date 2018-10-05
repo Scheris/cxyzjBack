@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @Date 2018/09/28 14:05
  * @Description:
  */
-@Component//使用@Configuration也可以
+@Component
 @ConfigurationProperties(prefix = "filepath")//前缀
 @PropertySource(value = "classpath:config/Config.properties")//配置文件路径
 @Data

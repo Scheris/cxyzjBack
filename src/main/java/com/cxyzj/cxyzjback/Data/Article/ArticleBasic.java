@@ -40,7 +40,7 @@ public class ArticleBasic implements com.cxyzj.cxyzjback.Data.Data {
         this.is_collected = false;
         this.allow_delete = false;
         this.allow_edit = false;
-        this.status_id = article.getStatus_id();
+        this.status_id = article.getStatusId();
         this.is_author = false;
     }
 

@@ -6,9 +6,7 @@ package com.cxyzj.cxyzjback.Service.Interface.Article;
  * @Description:
  */
 public interface ArticleService {
-    String writeArticle(String title, String text, String typeId, String articleSum, String thumbnail, int statusId, String userId);
-
-    String getTypes();
+    String writeArticle(String title, String text, String label_id, String articleSum, String thumbnail, int statusId, String userId);
 
     String articleDetails(String articleId);
 

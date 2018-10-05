@@ -39,6 +39,5 @@ public class UserBasic extends UserData {
         this.fans = user.getFans();
         this.introduce = user.getIntroduce();
         this.status_id = user.getStatusId();
-
     }
 }
