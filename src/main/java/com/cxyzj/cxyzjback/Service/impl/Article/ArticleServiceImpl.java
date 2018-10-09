@@ -124,19 +124,17 @@ public class ArticleServiceImpl implements ArticleService {
             articleBasic.setAllow_delete(true);
             articleBasic.setAllow_edit(true);
             articleBasic.set_collected(false);
-            response.insert("article", articleBasic);
-
+            response.insert("user", new UserBasic(user));
         } else {
             //不是作者
             //如果已收藏该文章
             if (articleCollectionJpaRepository.existsByArticleIdAndUserId(articleId, userId)) {
                 articleBasic.set_collected(true);
-                response.insert("article", articleBasic);
             }
+            response.insert("user", new OtherDetails(user));
         }
-
+        response.insert("article", articleBasic);
         response.insert("label", new ArticleLabelBasic(articleLabel));
-        response.insert("user", new UserBasic(user));
         return response.sendSuccess();
     }
 
