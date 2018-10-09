@@ -70,7 +70,7 @@ public class ArticleController {
 
     /**
      * @Description 获取用户草稿列表
-    */
+     */
     @GetMapping(value = "/draft_list/{page_num}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String userDraft(@PathVariable(name = "page_num") int pageNum) {
@@ -78,9 +78,10 @@ public class ArticleController {
 
     }
 
-    @GetMapping(value = "/{label_id}/{page_num}")
+    @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String getArticle(@PathVariable(name = "label_id") String label_id, @PathVariable(name = "page_num") int page_num){
+    public String getArticle(@RequestParam(name = "label_id", required = false, defaultValue = "0") String label_id, @RequestParam(name = "page_num") int page_num) {
+        //TODO 返回的数据不对，需要重写
         return articleService.getArticle(label_id, page_num);
     }
 
