@@ -68,11 +68,21 @@ public class ArticleController {
         return articleService.visitArticle(article_id);
     }
 
+    /**
+     * @Description 获取用户草稿列表
+    */
     @GetMapping(value = "/draft_list/{page_num}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String userDraft(@PathVariable(name = "page_num") int pageNum) {
         return articleService.draftList(pageNum);
 
     }
+
+    @GetMapping(value = "/{label_id}/{page_num}")
+    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String getArticle(@PathVariable(name = "label_id") String label_id, @PathVariable(name = "page_num") int page_num){
+        return articleService.getArticle(label_id, page_num);
+    }
+
 
 }

@@ -238,6 +238,15 @@ public class ArticleServiceImpl implements ArticleService {
         return response.sendSuccess();
     }
 
+    @Override
+    public String getArticle(String labelId, int pageNum) {
+        response = new Response();
+        Page<Article> articlePage = allArticle(pageNum, Constant.PUBLISH);
+        PageData pageData = new PageData(articlePage, pageNum);
+        response.insert("list", getArticleList(articlePage.iterator(), true));
+        response.insert(pageData);
+        return response.sendSuccess();
+    }
 
     /**
      * @param pageNum  页码（从0开始）
@@ -250,6 +259,12 @@ public class ArticleServiceImpl implements ArticleService {
         Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "articleId");//排序方式，按照文章id进行默认排序（从小到大）
         Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_ARTICLE, sort);//设置分页信息，参数为：页码数，一次获取的个数，排序方式
         return articleJpaRepository.findAllByUserIdAndStatusId(pageable, userId, statusId);
+    }
+
+    private Page<Article> allArticle(int pageNum, int statusId) {
+        Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "articleId");
+        Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_ARTICLE, sort);
+        return articleJpaRepository.findAllByStatusId(pageable, statusId);
     }
 
     /**
@@ -290,7 +305,8 @@ public class ArticleServiceImpl implements ArticleService {
                 User user = userList.get(i);//获取文章用户
                 boolean status = false;
                 if (userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, user.getUserId())) {
-                    status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, user.getUserId()) == Constant.FOCUS;
+                    status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, user.getUserId()) == Constant.FOCUS ||
+                            userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, user.getUserId()) == Constant.EACH;
                 }
                 OtherDetails otherDetails = new OtherDetails(user, status);//封装用户数据
                 articleList = new ArticleList(articles.get(i), new ArticleLabelBasic(labelList.get(i)), otherDetails);//封装数据
