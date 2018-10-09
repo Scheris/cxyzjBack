@@ -94,7 +94,7 @@ public class ArticleController {
     }
 
     /**
-     * @Description 获取文章列表（主页）
+     * @Description 获取文章列表
      */
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
