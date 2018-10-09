@@ -26,6 +26,8 @@ public interface ArticleJpaRepository extends JpaRepository<Article, Integer> {
 
     Page<Article> findAllByUserId(Pageable pageable, String userId);
 
+    Page<Article> findAllByStatusId(Pageable pageable, int statusId);
+
     @Transactional
     @Modifying
     @Query(value = "update article set comments=?1 where article_id=?2", nativeQuery = true)
@@ -84,4 +86,5 @@ public interface ArticleJpaRepository extends JpaRepository<Article, Integer> {
     @Modifying
     @Query(value = "delete from article where article_id=?1", nativeQuery = true)
     void deleteByArticleId(String articleId);
+
 }
