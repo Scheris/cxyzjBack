@@ -16,6 +16,9 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
+    /**
+     * @Description 写文章
+    */
     @PostMapping(value = "/write")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')  and principal.username.equals(#user_id)")
     public String writeArticle(@RequestParam String title, @RequestParam String text, @RequestParam String type_id,
@@ -24,24 +27,36 @@ public class ArticleController {
         return articleService.writeArticle(title, text, type_id, article_sum, thumbnail, status_id, user_id);
     }
 
+    /**
+     * @Description 获取文章详情
+     */
     @GetMapping(value = "/{article_id}")
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String articleDetails(@PathVariable(name = "article_id") String article_id) {
         return articleService.articleDetails(article_id);
     }
 
+    /**
+     * @Description 收藏文章
+     */
     @PutMapping(value = "/collect/{article_id}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String collect(@PathVariable(name = "article_id") String article_id) {
         return articleService.collect(article_id);
     }
 
+    /**
+     * @Description 取消收藏文章
+     */
     @DeleteMapping(value = "/collect/{article_id}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String collectDel(@PathVariable(name = "article_id") String article_id) {
         return articleService.collectDel(article_id);
     }
 
+    /**
+     * @Description 删除文章
+     */
     @DeleteMapping(value = "/{article_id}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')  and principal.username.equals(#user_id)")
     public String articleDel(@PathVariable(name = "article_id") String article_id, @RequestParam String user_id) {
@@ -78,9 +93,13 @@ public class ArticleController {
 
     }
 
-    @GetMapping(value = "/{label_id}/{page_num}")
+    /**
+     * @Description 获取文章列表（主页）
+     */
+    @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String getArticle(@PathVariable(name = "label_id") String label_id, @PathVariable(name = "page_num") int page_num){
+    public String getArticle(@RequestParam(name = "label_id", required = false, defaultValue = "0") String label_id,
+                             @RequestParam(name = "page_num") int page_num){
         return articleService.getArticle(label_id, page_num);
     }
 

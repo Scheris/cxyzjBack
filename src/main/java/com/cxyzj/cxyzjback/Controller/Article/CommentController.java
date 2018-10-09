@@ -41,6 +41,16 @@ public class CommentController {
     }
 
     /**
+     * @Description 删除评论
+     */
+    @DeleteMapping(value = "/comment")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String commentDel(@RequestParam(required = false) String comment_id,
+                             @RequestParam(required = false) String reply_id) throws NoSuchFieldException {
+        return commentService.commentDel(comment_id, reply_id);
+    }
+
+    /**
      * @Description 回复评论
      */
     @PostMapping(value = "/comment/reply")
@@ -51,14 +61,16 @@ public class CommentController {
     }
 
     /**
-     * @Description 删除评论
+     * @Description 获取回复列表
      */
-    @DeleteMapping(value = "/comment")
-    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String commentDel(@RequestParam(required = false) String comment_id,
-                             @RequestParam(required = false) String reply_id) throws NoSuchFieldException {
-        return commentService.commentDel(comment_id, reply_id);
+    @GetMapping(value = "/reply_list/{comment_id}/{page_num}")
+    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String replyList(@PathVariable(name = "comment_id") String comment_id,
+                            @PathVariable(name = "page_num") int page_num) {
+        return commentService.replyList(comment_id, page_num);
     }
+
+
 
     /**
      * @Description 支持评论

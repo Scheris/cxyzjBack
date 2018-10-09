@@ -124,15 +124,14 @@ public class ArticleServiceImpl implements ArticleService {
             articleBasic.setAllow_delete(true);
             articleBasic.setAllow_edit(true);
             articleBasic.set_collected(false);
-            response.insert("article", articleBasic);
-
+            response.insert("user", new UserBasic(user));
         } else {
             //不是作者
             //如果已收藏该文章
             if (articleCollectionJpaRepository.existsByArticleIdAndUserId(articleId, userId)) {
                 articleBasic.set_collected(true);
-                response.insert("article", articleBasic);
             }
+            response.insert("user", new OtherDetails(user));
         }
 
         response.insert("label", new ArticleLabelBasic(articleLabel));
@@ -193,7 +192,7 @@ public class ArticleServiceImpl implements ArticleService {
             //存在文章
             ArrayList<String> commentVoteList = new ArrayList<>();
             List<Reply> replies = replyJpaRepository.findAllByTargetId(articleId);
-            List<Comment> comments = commentJpaRepository.findAllByTargetId(articleId);
+            List<Comment> comments = commentJpaRepository.findByTargetId(articleId);
             for (Reply reply : replies) {
                 commentVoteList.add(reply.getReplyId());
             }
@@ -243,7 +242,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public String getArticle(String labelId, int pageNum) {
         response = new Response();
-        Page<Article> articlePage = allArticle(pageNum, Constant.PUBLISH);
+        Page<Article> articlePage = allArticle(pageNum, labelId, Constant.PUBLISH);
         PageData pageData = new PageData(articlePage, pageNum);
         response.insert("list", getArticleList(articlePage.iterator(), true));
         response.insert(pageData);
@@ -263,10 +262,14 @@ public class ArticleServiceImpl implements ArticleService {
         return articleJpaRepository.findAllByUserIdAndStatusId(pageable, userId, statusId);
     }
 
-    private Page<Article> allArticle(int pageNum, int statusId) {
+    private Page<Article> allArticle(int pageNum, String labelId, int statusId) {
         Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "articleId");
         Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_ARTICLE, sort);
-        return articleJpaRepository.findAllByStatusId(pageable, statusId);
+        if(!labelId.equals("0")) {
+            return articleJpaRepository.findAllByLabelIdAndStatusId(pageable, labelId, statusId);
+        } else {
+            return articleJpaRepository.findAllByStatusId(pageable, statusId);
+        }
     }
 
     /**

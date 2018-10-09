@@ -1,6 +1,8 @@
 package com.cxyzj.cxyzjback.Repository.Article;
 
 import com.cxyzj.cxyzjback.Bean.Article.Comment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -43,7 +45,7 @@ public interface CommentJpaRepository extends JpaRepository<Comment, Integer> {
     int findChildren(String commentId);
 
 
-    List<Comment> findAllByTargetId(String article_id);
+    List<Comment> findByTargetId(String article_id);
 
     @Transactional
     @Query(value = "select * from comment LIMIT ?1,?2", nativeQuery = true)
@@ -66,4 +68,6 @@ public interface CommentJpaRepository extends JpaRepository<Comment, Integer> {
     @Modifying
     @Query(value = "update comment set object=?1 where comment_id=?2", nativeQuery = true)
     void updateCommentObject(int object, String commentId);
+
+    Page<Comment> findAllByTargetId(Pageable pageable, String articleId);
 }

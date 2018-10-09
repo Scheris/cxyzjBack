@@ -1,30 +1,29 @@
 package com.cxyzj.cxyzjback.Service.impl.Article;
 
-import com.cxyzj.cxyzjback.Bean.Article.Comment;
-import com.cxyzj.cxyzjback.Bean.Article.CommentVote;
-import com.cxyzj.cxyzjback.Bean.Article.Reply;
+import com.cxyzj.cxyzjback.Bean.Article.*;
 import com.cxyzj.cxyzjback.Bean.PageBean;
 import com.cxyzj.cxyzjback.Bean.User.User;
-import com.cxyzj.cxyzjback.Data.Article.CommentBasic;
-import com.cxyzj.cxyzjback.Data.Article.ReplyBasic;
+import com.cxyzj.cxyzjback.Data.Article.*;
+import com.cxyzj.cxyzjback.Data.Other.PageData;
+import com.cxyzj.cxyzjback.Data.User.OtherDetails;
 import com.cxyzj.cxyzjback.Data.User.UserComment;
-import com.cxyzj.cxyzjback.Repository.Article.ArticleJpaRepository;
-import com.cxyzj.cxyzjback.Repository.Article.CommentJpaRepository;
-import com.cxyzj.cxyzjback.Repository.Article.CommentVoteJpaRepository;
-import com.cxyzj.cxyzjback.Repository.Article.ReplyJpaRepository;
+import com.cxyzj.cxyzjback.Repository.Article.*;
+import com.cxyzj.cxyzjback.Repository.User.UserAttentionJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.Article.CommentService;
+import com.cxyzj.cxyzjback.Utils.Constant;
 import com.cxyzj.cxyzjback.Utils.Response;
 import com.cxyzj.cxyzjback.Utils.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Auther: 夏
@@ -50,6 +49,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Autowired
     private ArticleJpaRepository articleJpaRepository;
+
+    @Autowired
+    private UserAttentionJpaRepository userAttentionJpaRepository;
+
     private Comment comment;
     private CommentVote commentVote;
     private Response response;
@@ -73,9 +76,14 @@ public class CommentServiceImpl implements CommentService {
         comment.setTargetId(article_id);
         comment.setMode("article");
 
-        //获取楼号数组，取得最大值
-        int max = (int) Collections.max(commentJpaRepository.getLevel(article_id));
-        comment.setLevel(max + 1);
+        //判断该文章是否有人评论过
+        if(articleJpaRepository.findLevelsByArticleId(article_id) != 0) {
+            //获取楼号数组，取得最大值
+            int max = (int) Collections.max(commentJpaRepository.getLevel(article_id));
+            comment.setLevel(max + 1);
+        } else {
+            comment.setLevel(1);
+        }
         commentJpaRepository.save(comment);
         articleJpaRepository.updateCommentsByArticleId(articleJpaRepository.findCommentsByArticleId(article_id) + 1, article_id);
         articleJpaRepository.updateLevelsByArticleId(articleJpaRepository.findLevelsByArticleId(article_id) + 1, article_id);
@@ -93,63 +101,18 @@ public class CommentServiceImpl implements CommentService {
     /**
      * @param article_id
      * @param pageNum
-     * @Description 还没写好，待定。。。
+     * @Description 获取文章回复列表
      */
     @Override
     public String getCommentList(String article_id, int pageNum) {
 
-        List<CommentBasic> commentLists = new ArrayList<>();
-        List<UserComment> userComments = new ArrayList<>();
-        List<UserComment> userReplies = new ArrayList<>();
         response = new Response();
-        comment = new Comment();
-
-        List<Comment> commentList = commentJpaRepository.findAllByTargetId(article_id);
-
-        int totalRecord = commentList.size();
-        PageBean pb = new PageBean();
-        pb.PageBean(pageNum, 10, totalRecord);
-        int startIndex = pb.getStartIndex();
-
-        Comment[] comments = commentList.toArray(new Comment[0]);
-        pb.setList(commentJpaRepository.findAll(startIndex, 10));
-        pb.setPageNum(pageNum);
-
-        List<Reply> replies = new ArrayList<>();
-        List[] replyLists = new List[0];
-
-        Reply[] reply1 = new Reply[0];
-        for (int i = 0; i < comments.length; i++) {
-            comment = commentJpaRepository.findByCommentId(comments[i].getCommentId());
-            User user = userJpaRepository.findByUserId(comments[i].getDiscusser());
-            reply1 = replyJpaRepository.findByUserIdAndTargetId(comments[i].getDiscusser(), comments[i].getTargetId());
-
-            if (comment != null && reply1 == null) {
-
-            }
-
-            UserComment userComment = new UserComment(user);
-            CommentBasic commentBasic = new CommentBasic(comment);
-            if (commentVoteJpaRepository.findByUserIdAndTargetId(userId, comment.getDiscusser()) != null) {
-                commentBasic.setAllow_vote(false);
-                userComments.add(userComment);
-                commentLists.add(commentBasic);
-            } else {
-                userComments.add(userComment);
-                commentLists.add(commentBasic);
-            }
-        }
-
-        for (Reply aReply1 : reply1) {
-            replies.add(aReply1);
-            UserComment userReply = new UserComment(userJpaRepository.findByUserId(aReply1.getReplier()));
-            userReplies.add(userReply);
-            replyLists = new List[]{replies, userReplies};
-        }
-
-        List[] list = new List[]{commentLists, userComments, Arrays.asList(replyLists)};
-        response.insert(list);
+        Page<Comment> commentPage = getComment(pageNum, article_id);
+        PageData pageData = new PageData(commentPage, pageNum);
+        response.insert("list", getCommentList(commentPage.iterator()));
+        response.insert(pageData);
         return response.sendSuccess();
+
     }
 
     @Override
@@ -358,4 +321,130 @@ public class CommentServiceImpl implements CommentService {
             }
         }
     }
+
+    @Override
+    public String replyList(String commentId, int pageNum) {
+        response = new Response();
+        Page<Reply> replyPage = getReply(pageNum, commentId);
+        PageData pageData = new PageData(replyPage, pageNum);
+        response.insert("list", getReplyList(replyPage.iterator()));
+        response.insert(pageData);
+        return response.sendSuccess();
+    }
+
+    private Page<Comment> getComment(int pageNum, String articleId){
+        Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "commentId");
+        Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_COMMENT, sort);
+        return commentJpaRepository.findAllByTargetId(pageable, articleId);
+    }
+
+    private Page<Reply> getReply(int pageNum, String commentId){
+        Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "replyId");
+        Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_REPLY, sort);
+        return replyJpaRepository.findAllByCommentId(pageable, commentId);
+    }
+
+    private Page<Reply> getChildren(String commentId){
+        Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "replyId");
+        Pageable pageable = PageRequest.of(0, 3, sort);
+        return replyJpaRepository.findAllByCommentId(pageable, commentId);
+    }
+
+    /**
+     * @param ReplyIterator 获取回复列表迭代器
+     * @return 回复列表信息
+     */
+    private List<ReplyList> getReplyList(Iterator<Reply> ReplyIterator) {
+        ArrayList<ReplyBasic> replys = new ArrayList<>();//回复列表
+        ArrayList<String> userIdList = new ArrayList<>();//用户id列表
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        while (ReplyIterator.hasNext()) {
+            Reply reply = ReplyIterator.next();
+            ReplyBasic replyBasic = new ReplyBasic(reply);
+            replyBasic.setAllow_delete(userId.equals(reply.getReplier()));
+            replyBasic.setAllow_vote(userId.equals(reply.getReplier()));
+            replys.add(replyBasic);
+
+
+            userIdList.add(reply.getReplier());//读取发出评论用户
+        }
+
+        ArrayList<User> userList = new ArrayList<>();
+
+        for (String id : userIdList) {
+            userList.add(userJpaRepository.findByUserId(id));//查询每一个user信息
+        }
+        ArrayList<ReplyList> resultList = new ArrayList<>();
+        for (int i = 0; i < replys.size(); i++) {
+            ReplyList replyList;
+
+
+            User user = userList.get(i);//获取文章用户
+            boolean status = false;
+            if (userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, user.getUserId())) {
+                status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, user.getUserId()) == Constant.FOCUS ||
+                        userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, user.getUserId()) == Constant.EACH;
+            }
+            OtherDetails otherDetails = new OtherDetails(user, status);//封装用户数据
+
+            replyList = new ReplyList(replys.get(i),  otherDetails);//封装数据
+
+            resultList.add(replyList);
+        }
+        return resultList;
+    }
+
+    /**
+     * @param CommentIterator 获取评论列表迭代器
+     * @return 评论列表信息
+     */
+    private List<CommentList> getCommentList(Iterator<Comment> CommentIterator) {
+        ArrayList<CommentBasic> comments = new ArrayList<>();//文章评论
+        ArrayList<String> userIdList = new ArrayList<>();//用户id列表
+        ArrayList<String> replys = new ArrayList<>();//回复列表获取
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        while (CommentIterator.hasNext()) {
+            Comment comment = CommentIterator.next();
+            CommentBasic commentBasic = new CommentBasic(comment);
+            commentBasic.setAllow_vote(userId.equals(comment.getDiscusser()));
+            comments.add(commentBasic);
+
+            userIdList.add(comment.getDiscusser());
+            replys.add(comment.getCommentId());
+        }
+
+        ArrayList<User> userList = new ArrayList<>();
+        ArrayList<List<ReplyList>> replyList = new ArrayList<>();
+
+        for(String id : userIdList){
+            userList.add(userJpaRepository.findByUserId(id));
+        }
+
+        for(String id : replys) {
+            Page<Reply> replyPage = getChildren(id);
+            replyList.add(getReplyList(replyPage.iterator()));
+        }
+
+        ArrayList<CommentList> resultList = new ArrayList<>();
+        for(int i = 0; i<comments.size(); i++) {
+            CommentList commentList;
+
+            List<ReplyList> replyLists = replyList.get(i);
+
+            User user = userList.get(i);
+            boolean status = false;
+            if (userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, user.getUserId())) {
+                status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, user.getUserId()) == Constant.FOCUS ||
+                        userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, user.getUserId()) == Constant.EACH;
+            }
+            OtherDetails otherDetails = new OtherDetails(user, status);
+
+            commentList = new CommentList(comments.get(i), otherDetails, replyLists);
+
+            resultList.add(commentList);
+        }
+
+        return resultList;
+    }
+
 }

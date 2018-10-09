@@ -26,7 +26,7 @@ public interface ArticleJpaRepository extends JpaRepository<Article, Integer> {
 
     Page<Article> findAllByUserId(Pageable pageable, String userId);
 
-    Page<Article> findAllByStatusId(Pageable pageable, int statusId);
+    Page<Article> findAllByLabelIdAndStatusId(Pageable pageable, String labelId, int statusId);
 
     @Transactional
     @Modifying
@@ -87,4 +87,5 @@ public interface ArticleJpaRepository extends JpaRepository<Article, Integer> {
     @Query(value = "delete from article where article_id=?1", nativeQuery = true)
     void deleteByArticleId(String articleId);
 
+    Page<Article> findAllByStatusId(Pageable pageable, int statusId);
 }

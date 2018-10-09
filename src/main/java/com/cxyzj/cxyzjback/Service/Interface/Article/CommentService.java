@@ -21,4 +21,6 @@ public interface CommentService {
     String supportDel(String comment_id, String reply_id);
 
     String objectDel(String comment_id, String reply_id);
+
+    String replyList(String commentId, int pageNum);
 }

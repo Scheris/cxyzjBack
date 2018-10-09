@@ -1,6 +1,8 @@
 package com.cxyzj.cxyzjback.Repository.Article;
 
 import com.cxyzj.cxyzjback.Bean.Article.Reply;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +28,10 @@ public interface ReplyJpaRepository extends JpaRepository<Reply, String> {
     boolean existsByCommentId(String commentId);
 
     List<Reply> findAllByTargetId(String targetId);
+
+    Page<Reply> findAllByCommentId(Pageable pageable, String commentId);
+
+    Reply findAllByCommentId(String commentId);
 
 
     @Transactional

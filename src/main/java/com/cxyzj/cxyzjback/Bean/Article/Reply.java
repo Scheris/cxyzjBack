@@ -30,7 +30,7 @@ public class Reply {
     @Column(name = "user_id")
     private String userId;
 
-    @Column(name = "re_time")
+    @Column(name = "create_time")
     private long replyTime;
 
     @Column(name = "text")
