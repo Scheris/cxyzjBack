@@ -6,4 +6,5 @@ package com.cxyzj.cxyzjback.Service.Interface.Article;
  * @Description:
  */
 public interface ArticleLabelService {
+    String labelDetails();
 }
