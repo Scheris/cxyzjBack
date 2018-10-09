@@ -33,9 +33,9 @@ public class UserInfoController {
         return userInfoService.simpleOwn();
     }
 
-    @GetMapping(value = "/details/other/{userId}")
+    @GetMapping(value = "/details/other/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String getOtherDetail(@PathVariable(name = "userId") String userId) {
+    public String getOtherDetail(@PathVariable(name = "user_id") String userId) {
         return userInfoService.detailsOther(userId);
     }
 
@@ -114,21 +114,21 @@ public class UserInfoController {
     }
 
 
-    @GetMapping(value = "/simple/other/{userId}")
+    @GetMapping(value = "/simple/other/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS') and principal.username.equals(#userId)")
-    public String getOtherSimple(@PathVariable(name = "userId") String userId) {
+    public String getOtherSimple(@PathVariable(name = "user_id") String userId) {
         return userInfoService.simpleOther(userId);
     }
 
-    @PutMapping(value = "/follow/{userId}")
+    @PutMapping(value = "/follow/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String follow(@PathVariable(name = "userId") String targetId) {
+    public String follow(@PathVariable(name = "user_id") String targetId) {
         return userInfoService.follow(targetId);
     }
 
-    @DeleteMapping(value = "/follow/{userId}")
+    @DeleteMapping(value = "/follow/{user_id}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String delFollow(@PathVariable(name = "userId") String targetId) {
+    public String delFollow(@PathVariable(name = "user_id") String targetId) {
 
         return userInfoService.delFollow(targetId);
     }

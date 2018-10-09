@@ -133,9 +133,8 @@ public class ArticleServiceImpl implements ArticleService {
             }
             response.insert("user", new OtherDetails(user));
         }
-
+        response.insert("article", articleBasic);
         response.insert("label", new ArticleLabelBasic(articleLabel));
-        response.insert("user", new UserBasic(user));
         return response.sendSuccess();
     }
 
