@@ -11,4 +11,6 @@ public interface UserListGetService {
     String getFansList(String userId,int pageNum);
 
     String getArticleList(String userId, int pageNum);
+
+    String userComments(String user_id, int pageNum);
 }

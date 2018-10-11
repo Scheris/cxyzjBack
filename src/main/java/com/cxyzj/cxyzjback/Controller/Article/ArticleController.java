@@ -78,9 +78,13 @@ public class ArticleController {
 
     }
 
-    @GetMapping(value = "/{label_id}/{page_num}")
+    /**
+     * @Description 获取 文章列表(主页)
+     */
+    @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String getArticle(@PathVariable(name = "label_id") String label_id, @PathVariable(name = "page_num") int page_num){
+    public String getArticle(@RequestParam(name = "label_id", required = false, defaultValue = "0") String label_id,
+                             @RequestParam(name = "page_num") int page_num){
         return articleService.getArticle(label_id, page_num);
     }
 

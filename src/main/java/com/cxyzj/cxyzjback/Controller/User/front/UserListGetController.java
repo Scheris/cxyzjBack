@@ -38,5 +38,11 @@ public class UserListGetController {
         return userListGetService.getArticleList(userId, pageNum);
     }
 
+    @GetMapping(value = "/{user_id}/comment_list/{page_num}")
+    @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
+    public String userComments(@PathVariable(name = "user_id") String user_id, @PathVariable(name = "page_num") int pageNum) {
+        return userListGetService.userComments(user_id, pageNum);
+    }
+
 
 }

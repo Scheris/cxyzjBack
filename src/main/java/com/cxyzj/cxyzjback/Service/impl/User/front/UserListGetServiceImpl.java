@@ -2,12 +2,16 @@ package com.cxyzj.cxyzjback.Service.impl.User.front;
 
 
 import com.cxyzj.cxyzjback.Bean.Article.Article;
+import com.cxyzj.cxyzjback.Bean.Article.ArticleLabel;
 import com.cxyzj.cxyzjback.Bean.User.Attention;
 import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Data.Article.ArticleBasic;
+import com.cxyzj.cxyzjback.Data.Article.ArticleLabelBasic;
+import com.cxyzj.cxyzjback.Data.Article.ArticleList;
 import com.cxyzj.cxyzjback.Data.Other.PageData;
 import com.cxyzj.cxyzjback.Data.User.OtherDetails;
 import com.cxyzj.cxyzjback.Repository.Article.ArticleJpaRepository;
+import com.cxyzj.cxyzjback.Repository.Article.ArticleLabelJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserAttentionJpaRepository;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.User.front.UserListGetService;
@@ -18,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
@@ -38,6 +43,9 @@ public class UserListGetServiceImpl implements UserListGetService {
 
     @Autowired
     private UserAttentionJpaRepository userAttentionJpaRepository;
+
+    @Autowired
+    private ArticleLabelJpaRepository articleLabelJpaRepository;
 
     @Autowired
     private ArticleJpaRepository articleJpaRepository;
@@ -83,14 +91,23 @@ public class UserListGetServiceImpl implements UserListGetService {
     @Override
     public String getArticleList(String userId, int pageNum) {
         response = new Response();
-        Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "userId");
-        Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_ATTENTION_USER, sort);
-        Page<Article> articlePage = articleJpaRepository.findAllByUserId(pageable, userId);
-        PageData pageData = new PageData(articlePage, pageNum);
-        ArrayList<ArticleBasic> articleBasicArrayList = getArticleList(articlePage.iterator());
+
+        Page<Article> articlePage = articlePage(pageNum, userId);//获取到了一页的文章信息
+        PageData pageData = new PageData(articlePage, pageNum);//读取页面信息数据
+        response.insert("list", getArticleList(articlePage.iterator()));
         response.insert(pageData);
-        response.insert("list", articleBasicArrayList);
         return response.sendSuccess();
+    }
+
+    @Override
+    public String userComments(String user_id, int pageNum) {
+        return null;
+    }
+
+    private Page<Article> articlePage(int pageNum, String userId) {
+        Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "articleId");//排序方式，按照文章id进行默认排序（从小到大）
+        Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_USER_ARTICLE, sort);//设置分页信息，参数为：页码数，一次获取的个数，排序方式
+        return articleJpaRepository.findAllByUserId(pageable, userId);
     }
 
     /**
@@ -123,17 +140,31 @@ public class UserListGetServiceImpl implements UserListGetService {
         return otherDetailsArrayList;
     }
 
-    private ArrayList<ArticleBasic> getArticleList(Iterator<Article> articleIterator) {
-        ArrayList<String> articleIdList = new ArrayList<>();
+    /**
+     * @param articleIterator 用户文章列表迭代器
+     * @return 用户文章列表
+    */
+    private ArrayList<ArticleList> getArticleList(Iterator<Article> articleIterator) {
+        ArrayList<ArticleBasic> articles = new ArrayList<>();//文章列表
+        ArrayList<String> labelIdList = new ArrayList<>();//文章id列表（用于查询label）
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         while (articleIterator.hasNext()) {
-            articleIdList.add(articleIterator.next().getArticleId());
-        }
-        List<Article> articles = articleJpaRepository.findByArticleId(articleIdList);
-        ArrayList<ArticleBasic> articleBasicArrayList = new ArrayList<>();
-        for (Article article : articles) {
-            articleBasicArrayList.add(new ArticleBasic(article));
+            Article article = articleIterator.next();//获取一篇文章
+            ArticleBasic articleBasic = new ArticleBasic(article);//封装文章数据
+            articleBasic.IsAuthor(userId.equals(article.getUserId()));//设置是否为作者
+            articles.add(articleBasic);
+            labelIdList.add(article.getLabelId());//读取文章标签id
         }
 
-        return articleBasicArrayList;
+        ArrayList<ArticleLabel> labelList = new ArrayList<>();//获取标签列表
+        for (String id : labelIdList) {
+            labelList.add(articleLabelJpaRepository.findByLabelId(id));//查询每一个label信息
+        }
+        ArrayList<ArticleList> resultList = new ArrayList<>();//返回的列表信息
+        for (int i = 0; i < articles.size(); i++) {
+            ArticleList articleList = new ArticleList(articles.get(i), new ArticleLabelBasic(labelList.get(i)));//封装数据
+            resultList.add(articleList);
+        }
+        return resultList;
     }
 }
