@@ -1,7 +1,6 @@
 package com.cxyzj.cxyzjback.Controller.User.front;
 
 
-
 import com.cxyzj.cxyzjback.Service.Interface.User.front.UserInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/v1/user")
 public class UserInfoController {
 
+    private final UserInfoService userInfoService;
+
     @Autowired
-    UserInfoService userInfoService;
+    public UserInfoController(UserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
+    }
 
     @GetMapping(value = "/details/own")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")

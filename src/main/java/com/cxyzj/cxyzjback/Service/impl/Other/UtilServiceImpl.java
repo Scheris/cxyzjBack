@@ -20,6 +20,7 @@ import java.util.UUID;
  * @Auther: 夏
  * @DATE: 2018/9/12 14:01
  * @Description: 工具
+ * @checked true
  */
 @Service
 @Slf4j
@@ -28,13 +29,17 @@ public class UtilServiceImpl implements UtilService {
     private Response response;
 
     //读取配置文件中的路径信息
+    private final ConfigResources configResources;
+
     @Autowired
-    private ConfigResources configResources;
+    public UtilServiceImpl(ConfigResources configResources) {
+        this.configResources = configResources;
+    }
 
     /**
      * @param multipartFile 文件
      * @param type          文件的分类
-     * @return 文件上传的地址
+     * @return 文件上传后存放的地址
      * @checked true
      */
     @Override
@@ -51,7 +56,6 @@ public class UtilServiceImpl implements UtilService {
         if (fileName != null) {
             suffixName = fileName.substring(fileName.lastIndexOf("."));
         }
-        // 文件上传后的路径，临时路径，部署到服务器需要修改
         FilePath filePath;
         switch (type) {//根据类型选择不同的路径文件夹
             case "avatar":

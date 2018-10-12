@@ -18,8 +18,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/v1/article")
 public class CommentController {
 
+    private final CommentService commentService;
+
     @Autowired
-    private CommentService commentService;
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
+    }
 
     /**
      * @Description 发表评论

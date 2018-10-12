@@ -12,7 +12,7 @@ import javax.transaction.Transactional;
  * @DATE: 2018/9/17 16:19
  * @Description:
  */
-public interface ArticleLabelJpaRepository extends JpaRepository<ArticleLabel, Integer> {
+public interface ArticleLabelJpaRepository extends JpaRepository<ArticleLabel, String> {
 
     ArticleLabel findByLabelId(String labelId);
 

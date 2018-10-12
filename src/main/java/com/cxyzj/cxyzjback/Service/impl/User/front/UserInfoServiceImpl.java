@@ -21,31 +21,38 @@ import javax.annotation.Resource;
 /**
  * @Author 夏
  * @Date 10:15 Status.FOCUS8/8/25
+ * @Description: 用户信息修改与用户验证API
+ * @checked true
  */
 
 @Service
 @Slf4j
 public class UserInfoServiceImpl implements UserInfoService {
 
-    @Autowired
-    private UserJpaRepository userJpaRepository;
-
-    @Autowired
-    private UserAttentionJpaRepository userAttentionJpaRepository;
+    private final UserJpaRepository userJpaRepository;
+    private final UserAttentionJpaRepository userAttentionJpaRepository;
     private RedisKeyDto redisKeyDto;
     private Response response;
     private String userId;
     private User user;
-
+    protected final Utils utils;
 
     //短信验证码过期时间 单位：seconds
     private static final int EXPIRATION_TIME = 60;
 
     //修改关键信息的缓存时间
-    private static final int ALLOW_CHANGE = 5*EXPIRATION_TIME;
+    private static final int ALLOW_CHANGE = 5 * EXPIRATION_TIME;
 
     @Resource
     private RedisService redisService;
+
+    //注入
+    @Autowired
+    public UserInfoServiceImpl(UserAttentionJpaRepository userAttentionJpaRepository, UserJpaRepository userJpaRepository, Utils utils) {
+        this.userAttentionJpaRepository = userAttentionJpaRepository;
+        this.userJpaRepository = userJpaRepository;
+        this.utils = utils;
+    }
 
 
     /**
@@ -220,30 +227,29 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (user == null) {
             return response.sendFailure(Status.ILLEGAL_USER, "非法的用户！");
         }
-        CodeSend codeSend = new CodeSend();
         boolean result = false;
         String code;
         switch (verifyType) {
             case "email":
                 String email = user.getEmail();
-                code = Code.mailCode();
+                code = utils.mailCode();
                 //将userId作为key，code作为Values缓存进redis
                 redisKeyDto.setKeys(userId);
                 redisKeyDto.setValues(code);
                 redisService.addRedisData(redisKeyDto, EXPIRATION_TIME);
-                String text = user.getNickname()+",你好，\n你正在验证绑定的邮箱，请在 30 分钟内输入以下验证码完成验证。如非你本人操作，请忽略此邮件。\n你的邮箱验证码是：";
-                result = codeSend.mailSend(email, code,text);
+                String text = user.getNickname() + ",你好，\n你正在验证绑定的邮箱，请在 30 分钟内输入以下验证码完成验证。如非你本人操作，请忽略此邮件。\n你的邮箱验证码是：";
+                result = utils.mailSend(email, code, text);
                 break;
             case "phone":
                 String phone = user.getPhone();
-                code = Code.phoneCode();
+                code = utils.phoneCode();
                 //将userId作为key，code作为Values缓存进redis
                 redisKeyDto.setKeys(userId);
                 redisKeyDto.setValues(code);
                 redisService.addRedisData(redisKeyDto, EXPIRATION_TIME);
                 log.info(code);
                 try {
-//                    result = codeSend.phoneSend(phone, code);
+//                    result = utils.phoneSend(phone, code);
                     result = true;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -370,7 +376,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     /**
      * @param otherId （其他）用户id
-     * @return 其他用户（详细）信息
+     * @return 其他用户信息
      * @Description 获取其他用户简要信息（ROLE_ANONYMITY）
      * @checked true
      */
@@ -380,13 +386,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (userJpaRepository.existsByUserId(otherId)) {
             OtherSimple userOther = new OtherSimple(userJpaRepository.findByUserId(otherId));
             userId = SecurityContextHolder.getContext().getAuthentication().getName();
-            if (userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, otherId)) {
-                int status = userAttentionJpaRepository.findStatusByUserIdAndTargetUser(userId, otherId);
-                if (status == Constant.FOCUS || status == Constant.EACH) {
-                    userOther.set_followed(true);
-                }
-            }
-            response.insert("user", userOther);
+            response.insert( userOther);
             return response.sendSuccess();
         } else {
             return response.sendFailure(Status.NONE_USER, "用户不存在");
@@ -406,7 +406,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         userId = SecurityContextHolder.getContext().getAuthentication().getName();//读取token中的用户id
         //检查attention表中，是否有存在目标用户的关系
         //约定：如果attention表中存在targetId的目标数据，则一定会有两条相应的记录，一条targetId在target_user字段上，另一条在user_id字段上
-        if(userJpaRepository.existsByUserId(userId)) {  //判断目标用户是否存在
+        if (userJpaRepository.existsByUserId(userId)) {  //判断目标用户是否存在
             if (!userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, targetId)) {
                 //如果没有，则创建关注和被关注的关系
                 attention = new Attention();
@@ -469,7 +469,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         user = new User();
         response = new Response();
         userId = SecurityContextHolder.getContext().getAuthentication().getName();//读取token中的用户id
-        if(userJpaRepository.existsByUserId(userId)) { //判断目标用户是否存在
+        if (userJpaRepository.existsByUserId(userId)) { //判断目标用户是否存在
             //判断关系是否存在
             if (userAttentionJpaRepository.existsByUserIdAndTargetUser(userId, targetId)) {
                 //存在关系
@@ -501,7 +501,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 //不存在关系
                 return response.sendFailure(Status.USER_NOT_FOLLOWED, "该用户未关注");
             }
-        }else {
+        } else {
             return response.sendFailure(Status.NONE_USER, "用户不存在");
         }
     }

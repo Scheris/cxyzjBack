@@ -1,6 +1,7 @@
 package com.cxyzj.cxyzjback.Data.Article;
 
 import com.cxyzj.cxyzjback.Data.User.OtherDetails;
+import com.cxyzj.cxyzjback.Data.User.OtherSimple;
 import lombok.Data;
 
 /**
@@ -15,9 +16,9 @@ public class ArticleList implements com.cxyzj.cxyzjback.Data.Data {
 
     private ArticleBasic article;
     private ArticleLabelBasic label;
-    private OtherDetails user;
+    private OtherSimple user;
 
-    public ArticleList(ArticleBasic article, ArticleLabelBasic label, OtherDetails user) {
+    public ArticleList(ArticleBasic article, ArticleLabelBasic label, OtherSimple user) {
         this.article = article;
         this.label = label;
         this.user = user;

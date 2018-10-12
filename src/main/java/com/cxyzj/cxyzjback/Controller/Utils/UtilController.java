@@ -19,8 +19,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(value = "/v1/utils")
 public class UtilController {
 
+    private final UtilService utilService;
+
     @Autowired
-    private UtilService utilService;
+    public UtilController(UtilService utilService) {
+        this.utilService = utilService;
+    }
 
     @PostMapping(value = "/upload/{type}")
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")

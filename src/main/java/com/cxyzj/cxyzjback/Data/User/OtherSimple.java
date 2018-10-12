@@ -15,27 +15,14 @@ public class OtherSimple extends UserData {
     private String user_id;
     private String nickname;
     private String head_url;
-    private String role;
-    private String introduce;
     private int gender;
-    private int attentions;
-    private int status_id;
-    private int fans;
-    private boolean is_followed;
 
     public OtherSimple(User user) {
 
         this.user_id = user.getUserId();
         this.nickname = user.getNickname();
         this.head_url = user.getHeadUrl();
-        this.role = RoleList.getRoles().getRole(user.getRoleId());
-        this.introduce = user.getIntroduce();
         this.gender = user.getGender();
-        this.attentions = user.getAttentions();
-        this.fans = user.getFans();
-        this.status_id = user.getStatusId();
-        this.is_followed = false;
-        this.status_id = user.getStatusId();
 
     }
 

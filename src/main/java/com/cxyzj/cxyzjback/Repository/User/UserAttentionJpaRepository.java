@@ -13,8 +13,7 @@ import java.util.List;
 @Transactional
 public interface UserAttentionJpaRepository extends JpaRepository<Attention, Integer> {
 
-
-    Page<Attention> findAllByUserIdAndStatus(Pageable pageable, String userID, int status);
+    Page<Attention> findAllByUserIdAndStatusOrStatus(Pageable pageable, String userID, int status,int status2);
 
     boolean existsByUserIdAndTargetUser(String userId, String targetUser);
 

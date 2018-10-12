@@ -19,8 +19,12 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequestMapping(value = "/v1/user/auth")
 public class AuthController {
+    private final AuthService authService;
+
     @Autowired
-    private AuthService authService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping(value = "/login_password")
     public String login(@RequestParam(required = false) String email, @RequestParam String password, @RequestParam(required = false) String phone) {
