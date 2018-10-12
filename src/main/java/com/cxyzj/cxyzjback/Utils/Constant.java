@@ -12,7 +12,7 @@ public final class Constant {
     public static final int PAGE_COMMENT = 10; //一页的评论的数量
     public static final int PAGE_REPLY = 5; //一页的回复数量
     public static final int PAGE_USER_ARTICLE = 5; //用户的一页的文章数量
-
+    public static final String NONE = "0";//不存在
     //数据库status表的信息
     public static final int OBJECT = 0;//反对
     public static final int SUPPORT = 1;//支持

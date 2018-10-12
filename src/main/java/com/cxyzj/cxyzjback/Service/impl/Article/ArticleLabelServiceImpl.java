@@ -14,16 +14,21 @@ import java.util.List;
 /**
  * @Auther: 夏
  * @DATE: 2018/10/9 15:14
- * @Description:
+ * @Description: 文章标签系统的API
+ * @checked false
  */
 
 @Service
 public class ArticleLabelServiceImpl implements ArticleLabelService {
 
-    @Autowired
-    private ArticleLabelJpaRepository articleLabelJpaRepository;
+    private final ArticleLabelJpaRepository articleLabelJpaRepository;
 
     private Response response;
+
+    @Autowired
+    public ArticleLabelServiceImpl(ArticleLabelJpaRepository articleLabelJpaRepository) {
+        this.articleLabelJpaRepository = articleLabelJpaRepository;
+    }
 
     @Override
     public String labelDetails() {
@@ -31,8 +36,8 @@ public class ArticleLabelServiceImpl implements ArticleLabelService {
         ArrayList<ArticleLabelDetail> articleLabelDetails = new ArrayList<>();
         List<ArticleLabel> articleLabels = articleLabelJpaRepository.findAll();
 
-        for(int i = 0;i< articleLabels.size(); i++){
-            ArticleLabelDetail articleLabelDetail = new ArticleLabelDetail(articleLabels.get(i));
+        for (ArticleLabel articleLabel : articleLabels) {
+            ArticleLabelDetail articleLabelDetail = new ArticleLabelDetail(articleLabel);
             articleLabelDetails.add(articleLabelDetail);
         }
 

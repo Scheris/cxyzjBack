@@ -6,11 +6,8 @@ import com.cxyzj.cxyzjback.Data.User.UserBasic;
 import com.cxyzj.cxyzjback.Repository.User.UserJpaRepository;
 import com.cxyzj.cxyzjback.Service.Interface.Other.RedisService;
 import com.cxyzj.cxyzjback.Service.Interface.User.front.AuthService;
-import com.cxyzj.cxyzjback.Utils.Code;
-import com.cxyzj.cxyzjback.Utils.CodeSend;
+import com.cxyzj.cxyzjback.Utils.*;
 import com.cxyzj.cxyzjback.Utils.JWT.JWTUtils;
-import com.cxyzj.cxyzjback.Utils.Response;
-import com.cxyzj.cxyzjback.Utils.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,20 +19,26 @@ import javax.annotation.Resource;
  * @Package com.cxyzj.cxyzjback.Service.impl
  * @Author Yaser
  * @Date 2018/08/10 15:38
- * @Description:
+ * @Description: 用户登录注册API
+ * @checked true
  */
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
-    @Autowired
-    private UserJpaRepository userJpaRepository;
+    private final UserJpaRepository userJpaRepository;
     private Response response;
-
+    private final Utils utils;
     //短信验证码过期时间,10分钟
-    private static final int EXPIRATIONTIME = 60 * 1000 * 10;
+    private static final int EXPIRATION_TIME = 60 * 1000 * 10;
 
     @Resource
     private RedisService redisService;
+
+    @Autowired
+    public AuthServiceImpl(UserJpaRepository userJpaRepository, Utils utils) {
+        this.userJpaRepository = userJpaRepository;
+        this.utils = utils;
+    }
 
     /**
      * @param email    邮箱
@@ -133,22 +136,21 @@ public class AuthServiceImpl implements AuthService {
         // TODO 删除注释
         RedisKeyDto redisKeyDto = new RedisKeyDto();
         response = new Response();
-        CodeSend codeSend = new CodeSend();
         boolean result;
         if (email != null) {
-            String code = Code.mailCode();
+            String code = utils.mailCode();
             redisKeyDto.setKeys(email);
             redisKeyDto.setValues(code);
-            redisService.addRedisData(redisKeyDto, EXPIRATIONTIME);
+            redisService.addRedisData(redisKeyDto, EXPIRATION_TIME);
             String text = "你好，你现在正在绑定邮箱，请在 30 分钟内输入以下验证码完成绑定。 如非你本人操作，请忽略此邮件。";
-            result = codeSend.mailSend(email, code, text);
+            result = utils.mailSend(email, code, text);
         } else {
             if (phone != null) {
-                String code = Code.phoneCode();
+                String code = utils.phoneCode();
                 redisKeyDto.setKeys(phone);
                 redisKeyDto.setValues(code);
-                redisService.addRedisData(redisKeyDto, EXPIRATIONTIME);
-//                result = codeSend.phoneSend(phone, code);
+                redisService.addRedisData(redisKeyDto, EXPIRATION_TIME);
+//                result = utils.phoneSend(phone, code);
                 result = true;
                 log.info("----------验证码是：" + code);
             } else {

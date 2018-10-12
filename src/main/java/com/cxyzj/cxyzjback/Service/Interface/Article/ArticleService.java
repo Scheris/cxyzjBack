@@ -20,7 +20,5 @@ public interface ArticleService {
 
     String draftList(int pageNum);
 
-    String visitArticle(String article_id);
-
-    String getArticle(String labelId, int pageNum);
+    String getArticleList(String labelId, int pageNum);
 }

@@ -28,36 +28,41 @@ import java.util.*;
 /**
  * @Auther: 夏
  * @DATE: 2018/9/6 15:23
- * @Description:
+ * @Description: 文章评论系统API
+ * @checked false
  */
 
 @Service
 @Slf4j
 public class CommentServiceImpl implements CommentService {
 
-    @Autowired
-    private CommentJpaRepository commentJpaRepository;
+    private final CommentJpaRepository commentJpaRepository;
 
-    @Autowired
-    private CommentVoteJpaRepository commentVoteJpaRepository;
+    private final CommentVoteJpaRepository commentVoteJpaRepository;
 
-    @Autowired
-    private ReplyJpaRepository replyJpaRepository;
+    private final ReplyJpaRepository replyJpaRepository;
 
-    @Autowired
-    private UserJpaRepository userJpaRepository;
+    private final UserJpaRepository userJpaRepository;
 
-    @Autowired
-    private ArticleJpaRepository articleJpaRepository;
+    private final ArticleJpaRepository articleJpaRepository;
 
-    @Autowired
-    private UserAttentionJpaRepository userAttentionJpaRepository;
+    private final UserAttentionJpaRepository userAttentionJpaRepository;
 
     private Comment comment;
     private CommentVote commentVote;
     private Response response;
     private String userId;
     private Reply reply;
+
+    @Autowired
+    public CommentServiceImpl(CommentJpaRepository commentJpaRepository, CommentVoteJpaRepository commentVoteJpaRepository, ReplyJpaRepository replyJpaRepository, UserJpaRepository userJpaRepository, ArticleJpaRepository articleJpaRepository, UserAttentionJpaRepository userAttentionJpaRepository) {
+        this.commentJpaRepository = commentJpaRepository;
+        this.commentVoteJpaRepository = commentVoteJpaRepository;
+        this.replyJpaRepository = replyJpaRepository;
+        this.userJpaRepository = userJpaRepository;
+        this.articleJpaRepository = articleJpaRepository;
+        this.userAttentionJpaRepository = userAttentionJpaRepository;
+    }
 
     /**
      * @param text       评论

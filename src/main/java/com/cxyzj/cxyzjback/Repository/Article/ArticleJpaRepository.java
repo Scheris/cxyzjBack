@@ -80,7 +80,7 @@ public interface ArticleJpaRepository extends JpaRepository<Article, Integer> {
     @Transactional
     @Modifying
     @Query(value = "update article a set a.collections=a.collections-1 where article_id=?1", nativeQuery = true)
-    void deleteCollectionsByArticleId(String articleId);
+    void reduceCollectionsByArticleId(String articleId);
 
     @Transactional
     @Modifying

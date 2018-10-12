@@ -21,8 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/v1/article")
 public class ArticleLabelController {
 
+    private final ArticleLabelService articleLabelService;
+
     @Autowired
-    private ArticleLabelService articleLabelService;
+    public ArticleLabelController(ArticleLabelService articleLabelService) {
+        this.articleLabelService = articleLabelService;
+    }
 
     @GetMapping(value = "/labels/details")
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")

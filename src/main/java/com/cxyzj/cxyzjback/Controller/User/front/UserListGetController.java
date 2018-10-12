@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/v1/user")
 public class UserListGetController {
 
+    private final UserListGetService userListGetService;
+
     @Autowired
-    UserListGetService userListGetService;
+    public UserListGetController(UserListGetService userListGetService) {
+        this.userListGetService = userListGetService;
+    }
 
     @GetMapping(value = "{user_id}/attention_list/{page_num}")
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
@@ -34,7 +38,7 @@ public class UserListGetController {
 
     @GetMapping(value = "/{user_id}/article_list/{page_num}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String getArticleList(@PathVariable(name = "user_id") String userId, @PathVariable(name = "page_num") int pageNum){
+    public String getArticleList(@PathVariable(name = "user_id") String userId, @PathVariable(name = "page_num") int pageNum) {
         return userListGetService.getArticleList(userId, pageNum);
     }
 

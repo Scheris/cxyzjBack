@@ -15,15 +15,14 @@ import java.util.stream.Collectors;
  * @Package com.cxyzj.cxyzjback.Catch
  * @Author Yaser
  * @Date 2018/08/09 16:17
- * @Description: 预读取用户角色信息
+ * @Description: 预读取用户角色信息，目前是存在tomcat中的，后期考虑移植到redis中
  */
 @Slf4j
 @Component
 public class RoleList {
     private static Map<Integer, String> UserRole;//角色信息表
 
-    @Autowired
-    private UserRoleJpaRepository userRoleJpaRepository;
+    private final UserRoleJpaRepository userRoleJpaRepository;
     private static RoleList roles;
 
     @PostConstruct
@@ -31,7 +30,9 @@ public class RoleList {
         roles = this;
     }
 
-    private RoleList() {
+    @Autowired
+    private RoleList(UserRoleJpaRepository userRoleJpaRepository) {
+        this.userRoleJpaRepository = userRoleJpaRepository;
     }
 
     public static RoleList getRoles() {

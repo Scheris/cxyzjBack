@@ -2,6 +2,7 @@ package com.cxyzj.cxyzjback.Controller.Article;
 
 
 import com.cxyzj.cxyzjback.Service.Interface.Article.ArticleService;
+import com.cxyzj.cxyzjback.Utils.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,15 +14,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/v1/article")
 public class ArticleController {
 
+    private final ArticleService articleService;
+
     @Autowired
-    private ArticleService articleService;
+    public ArticleController(ArticleService articleService) {
+        this.articleService = articleService;
+    }
 
     @PostMapping(value = "/write")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')  and principal.username.equals(#user_id)")
-    public String writeArticle(@RequestParam String title, @RequestParam String text, @RequestParam String type_id,
+    public String writeArticle(@RequestParam String title, @RequestParam String text, @RequestParam String label_id,
                                @RequestParam String article_sum, @RequestParam String thumbnail,
                                @RequestParam int status_id, @RequestParam String user_id) {
-        return articleService.writeArticle(title, text, type_id, article_sum, thumbnail, status_id, user_id);
+        return articleService.writeArticle(title, text, label_id, article_sum, thumbnail, status_id, user_id);
     }
 
     @GetMapping(value = "/{article_id}")
@@ -60,17 +65,8 @@ public class ArticleController {
     }
 
     /**
-     * @Description 访问文章
-     */
-    @PutMapping(value = "/visit/{article_id}")
-    @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String articleVisit(@PathVariable(name = "article_id") String article_id) {
-        return articleService.visitArticle(article_id);
-    }
-
-    /**
      * @Description 获取用户草稿列表
-    */
+     */
     @GetMapping(value = "/draft_list/{page_num}")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
     public String userDraft(@PathVariable(name = "page_num") int pageNum) {
@@ -83,9 +79,9 @@ public class ArticleController {
      */
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ANONYMITY','ROLE_USER','ROLE_ADMIN','ROLE_ADMINISTRATORS')")
-    public String getArticle(@RequestParam(name = "label_id", required = false, defaultValue = "0") String label_id,
-                             @RequestParam(name = "page_num") int page_num){
-        return articleService.getArticle(label_id, page_num);
+    public String getArticleList(@RequestParam(name = "label_id", required = false, defaultValue = Constant.NONE) String label_id,
+                                 @RequestParam(name = "page_num") int page_num) {
+        return articleService.getArticleList(label_id, page_num);
     }
 
 

@@ -33,23 +33,29 @@ import java.util.List;
 /**
  * @Author 夏
  * @Date 15:50 2018/8/30
+ * @Description: 用户列表信息获取
+ * @checked false
  */
 
 @Service
 public class UserListGetServiceImpl implements UserListGetService {
 
-    @Autowired
-    private UserJpaRepository userJpaRepository;
+    private final UserJpaRepository userJpaRepository;
 
-    @Autowired
-    private UserAttentionJpaRepository userAttentionJpaRepository;
+    private final UserAttentionJpaRepository userAttentionJpaRepository;
 
-    @Autowired
-    private ArticleLabelJpaRepository articleLabelJpaRepository;
+    private final ArticleLabelJpaRepository articleLabelJpaRepository;
 
-    @Autowired
-    private ArticleJpaRepository articleJpaRepository;
+    private final ArticleJpaRepository articleJpaRepository;
     private Response response;
+
+    @Autowired
+    public UserListGetServiceImpl(UserJpaRepository userJpaRepository, UserAttentionJpaRepository userAttentionJpaRepository, ArticleLabelJpaRepository articleLabelJpaRepository, ArticleJpaRepository articleJpaRepository) {
+        this.userJpaRepository = userJpaRepository;
+        this.userAttentionJpaRepository = userAttentionJpaRepository;
+        this.articleLabelJpaRepository = articleLabelJpaRepository;
+        this.articleJpaRepository = articleJpaRepository;
+    }
 
     /**
      * @param userId  用户ID
@@ -115,17 +121,19 @@ public class UserListGetServiceImpl implements UserListGetService {
      * @param status  指定状态
      * @param userId  指定要查询的用户id
      * @return 分页查询结果
+     * @checked true
      */
     private Page<Attention> pageSelect(int pageNum, int status, String userId) {
         Sort sort = new Sort(Sort.DEFAULT_DIRECTION, "userId");
         Pageable pageable = PageRequest.of(pageNum, Constant.PAGE_ATTENTION_USER, sort);
-        return userAttentionJpaRepository.findAllByUserIdAndStatus(pageable, userId, status);
+        return userAttentionJpaRepository.findAllByUserIdAndStatusOrStatus(pageable, userId, status, Constant.EACH);//互相关注也包含在内
     }
 
     /**
      * @param attentionIterator 要处理的用户的迭代器
      * @param isAttention       是否是关注
      * @return 处理后的用户信息
+     * @checked true
      */
     private ArrayList<OtherDetails> getAttentionsOrFans(Iterator<Attention> attentionIterator, boolean isAttention) {
         ArrayList<String> userIdList = new ArrayList<>();
@@ -133,8 +141,8 @@ public class UserListGetServiceImpl implements UserListGetService {
             userIdList.add(attentionIterator.next().getTargetUser());
         }
         ArrayList<OtherDetails> otherDetailsArrayList = new ArrayList<>();
-        for (String id : userIdList) {
-            User user = userJpaRepository.findByUserId(id);
+        List<User> userList = userJpaRepository.findAllById(userIdList);
+        for (User user : userList) {
             otherDetailsArrayList.add(new OtherDetails(user, isAttention));
         }
         return otherDetailsArrayList;
@@ -143,7 +151,7 @@ public class UserListGetServiceImpl implements UserListGetService {
     /**
      * @param articleIterator 用户文章列表迭代器
      * @return 用户文章列表
-    */
+     */
     private ArrayList<ArticleList> getArticleList(Iterator<Article> articleIterator) {
         ArrayList<ArticleBasic> articles = new ArrayList<>();//文章列表
         ArrayList<String> labelIdList = new ArrayList<>();//文章id列表（用于查询label）

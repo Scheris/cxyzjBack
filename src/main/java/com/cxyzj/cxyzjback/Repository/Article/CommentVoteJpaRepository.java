@@ -14,7 +14,7 @@ import java.util.List;
  * @DATE: 2018/9/6 15:14
  * @Description:
  */
-public interface CommentVoteJpaRepository extends JpaRepository<CommentVote, Integer> {
+public interface CommentVoteJpaRepository extends JpaRepository<CommentVote, String> {
 
     @Transactional
     @Query(value = "select * from comment_vote where user_id=?1 and target_id=?2", nativeQuery = true)
@@ -25,9 +25,7 @@ public interface CommentVoteJpaRepository extends JpaRepository<CommentVote, Int
     @Query(value = "delete from comment_vote where target_id=?1", nativeQuery = true)
     void deleteByTargetId(String target_id);
 
-    @Transactional
-    @Modifying
-    void deleteAllByTargetId(Collection<String> targetId);
-
     boolean existsByUserIdAndTargetId(String userId, String targetId);
+
+    List<CommentVote> findAllByTargetId(Iterable<String> ids);
 }
