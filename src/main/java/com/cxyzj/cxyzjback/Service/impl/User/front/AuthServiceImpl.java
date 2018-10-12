@@ -71,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
         if (user.getPassword().equals(password)) {
             userJpaRepository.updateLoginDateByUserId(System.currentTimeMillis(), user.getUserId());//更新用户登陆时间
             UserBasic loginResult = new UserBasic(user);
-            response.insert("user", loginResult);
+            response.insert(loginResult);
             response.insert("token", jwtUtils.generateToken(user));
             response.insert("refreshToken", jwtUtils.generateRefreshToken(user));
             return response.sendSuccess();
@@ -119,7 +119,7 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = jwtUtils.generateRefreshToken(user);//生成用户refreshToken
         response.insert("refreshToken", refreshToken);
         response.insert("token", token);
-        response.insert("user", new UserBasic(user));
+        response.insert(new UserBasic(user));
         return response.sendSuccess();
     }
 
@@ -228,7 +228,7 @@ public class AuthServiceImpl implements AuthService {
                 UserBasic loginResult = new UserBasic(user);
                 response.insert("token", token);
                 response.insert("refreshToken", refreshToken);
-                response.insert("user", loginResult);
+                response.insert(loginResult);
                 return response.sendSuccess();
             } else {
                 return response.sendFailure(Status.CODE_ERROR, "验证码错误！");

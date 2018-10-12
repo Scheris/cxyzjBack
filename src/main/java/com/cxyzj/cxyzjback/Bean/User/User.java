@@ -14,7 +14,7 @@ import javax.persistence.*;
  * @Description:
  */
 @Entity
-@Data //--Lombok注解
+@Data
 @Table(name = "user")
 public class User {
     @Id

@@ -18,6 +18,7 @@ public class ListToMap<T> {
     /**
      * @param list 要进行转换的列表数据
      * @param key  转换为map后的主键是哪一个
+     * @param clazz 类信息
      * @return 转换后的map
      */
     @SuppressWarnings("unchecked")

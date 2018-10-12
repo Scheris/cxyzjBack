@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @Description:
  */
 
-@Component//使用@Configuration也可以
+@Component
 @Data
 public class FilePath {
     private String absolute;

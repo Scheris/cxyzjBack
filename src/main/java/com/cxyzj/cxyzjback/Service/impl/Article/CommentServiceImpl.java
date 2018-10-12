@@ -1,7 +1,6 @@
 package com.cxyzj.cxyzjback.Service.impl.Article;
 
 import com.cxyzj.cxyzjback.Bean.Article.*;
-import com.cxyzj.cxyzjback.Bean.PageBean;
 import com.cxyzj.cxyzjback.Bean.User.User;
 import com.cxyzj.cxyzjback.Data.Article.*;
 import com.cxyzj.cxyzjback.Data.Other.PageData;

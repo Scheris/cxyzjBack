@@ -105,6 +105,9 @@ public class UserListGetServiceImpl implements UserListGetService {
         return response.sendSuccess();
     }
 
+    /**
+     * 没写好，待定。。。
+     */
     @Override
     public String userComments(String user_id, int pageNum) {
         return null;

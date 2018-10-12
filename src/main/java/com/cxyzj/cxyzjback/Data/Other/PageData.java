@@ -1,6 +1,5 @@
 package com.cxyzj.cxyzjback.Data.Other;
 
-import com.cxyzj.cxyzjback.Bean.PageBean;
 import com.cxyzj.cxyzjback.Data.Data;
 import org.springframework.data.domain.Page;
 

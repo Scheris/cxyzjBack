@@ -386,7 +386,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (userJpaRepository.existsByUserId(otherId)) {
             OtherSimple userOther = new OtherSimple(userJpaRepository.findByUserId(otherId));
             userId = SecurityContextHolder.getContext().getAuthentication().getName();
-            response.insert("user", userOther);
+            response.insert( userOther);
             return response.sendSuccess();
         } else {
             return response.sendFailure(Status.NONE_USER, "用户不存在");
